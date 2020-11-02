@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://MelodyCollider/./src/app.js"],"names":[],"mappings":";;;;;;AAAA,kC","file":"main.js","sourcesContent":["console.log(\"webpack is working!\")"],"sourceRoot":""}
