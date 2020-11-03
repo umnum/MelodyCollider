@@ -7,6 +7,7 @@
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 44:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -17,13 +18,11 @@ const DIM_Y = 500;
 const NUM_ORBS = 3;
 
 function Game() {
-    // call addOrbs()
     this.orbs = this.addOrbs();
     this.player = new Player(this.randomPosition());
 }
 
 Game.prototype.addOrbs = function () {
-    // NUM_ORBS times: new orb
     let orbs = [];
     for (let i = 0; i < NUM_ORBS; i++) {
         orbs.push(new Orb(this.randomPosition()));
@@ -36,31 +35,23 @@ Game.prototype.allObjects = function () {
 }
 
 Game.prototype.randomPosition = function () {
-    let randPosX = Math.floor(Math.random() * DIM_X);
-    let randPosY = Math.floor(Math.random() * DIM_Y);
+    let randPosX = Math.floor(20 + Math.random() * DIM_X * .8);
+    let randPosY = Math.floor(20 + Math.random() * DIM_Y * .8);
     return [randPosX, randPosY];
 }
 
 Game.prototype.draw = function (ctx) {
-    // clearRect(ctx)
-    // NUM_ORBS times: orb[i].draw(ctx)
     ctx.clearRect(0, 0, DIM_X, DIM_Y);
     this.allObjects().forEach(function (object) {
         object.draw(ctx);
     });
 }
 
-Game.prototype.moveObjects = function () {
-    // NUM_ORBS times: orb[i].move(ctx)
+Game.prototype.moveObjects = function (gridCtx) {
     this.allObjects().forEach(function (object) {
-        object.move();
+        object.move(gridCtx);
     })
 };
-
-Game.prototype.movePlayer = function (gridCtx) {
-    // Player's center pixel position has collided with the grid walls
-    this.player.move(gridCtx);
-}
 
 module.exports = Game;
 
@@ -87,10 +78,7 @@ GameView.prototype.start = function () {
 };
 
 GameView.prototype.handleGame = function (e) {
-    // get Player's center pixel position within grid canvas bitmap
-    let imageData = this.gridCtx.getImageData(this.game.player.pos[0], this.game.player.pos[1], 1, 1);
-    this.game.movePlayer(this.gridCtx);
-    //this.game.moveObjects();
+    this.game.moveObjects(this.gridCtx);
     this.game.draw(this.gameCtx);
 };
 
@@ -178,9 +166,44 @@ function Orb(pos) {
 
 Util.inherits(Orb, MovingObject);
 
-Orb.prototype.move = function () {
-    this.pos = [this.pos[0] + this.vel[0],
-                this.pos[1] + this.vel[1]];
+Orb.prototype.move = function (gridCtx) {
+    //TODO: implement wall collision physics
+    let newXPos = this.pos[0] + this.vel[0];
+    let newYPos = this.pos[1] + this.vel[1];
+    let imageDataX = gridCtx.getImageData(newXPos - DEFAULTS.RADIUS, this.pos[1] - DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS).data
+    let imageDataY = gridCtx.getImageData(this.pos[0] - DEFAULTS.RADIUS, newYPos - DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS).data
+    // check x-y collisions seperately, to allow smooth sliding along grid walls
+    let isCollisionX = false; // check grid's Alpha channel for collision with Player along x-axis
+    let isCollisionY = false; // check grid's Alpha channel for collision with Player along y-axis
+    for (let i = 0; i < imageDataX.length; i+=3) {
+        if (imageDataX[i] > 0) {
+            isCollisionX = true;
+            break;
+        }
+    }
+    for (let i = 0; i < imageDataY.length; i+=3) {
+        if (imageDataY[i] > 0) {
+            isCollisionY = true;
+            break;
+        }
+    }
+    if (!isCollisionX) {
+        //this.vel[0] *= -1;
+        newXPos = this.pos[0] + this.vel[0];
+        this.pos[0] = newXPos;
+    }
+    else {
+        this.vel[0] *= -1;
+    }
+
+    if (!isCollisionY) {
+        //this.vel[1] *= -1;
+        newYPos = this.pos[1] + this.vel[1];
+        this.pos[1] = newYPos;
+    }
+    else {
+        this.vel[1] *= -1;
+    }
 }
 
 module.exports = Orb;
@@ -193,7 +216,6 @@ module.exports = Orb;
   \***********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 94:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_object.js");
