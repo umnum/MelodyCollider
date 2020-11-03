@@ -57,6 +57,11 @@ Game.prototype.moveObjects = function () {
     })
 };
 
+Game.prototype.movePlayer = function (gridCtx) {
+    // Player's center pixel position has collided with the grid walls
+    this.player.move(gridCtx);
+}
+
 module.exports = Game;
 
 /***/ }),
@@ -67,7 +72,6 @@ module.exports = Game;
   \**************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 41:0-14 */
 /***/ ((module) => {
 
 function GameView(game, gameCtx, gridCtx) {
@@ -85,10 +89,8 @@ GameView.prototype.start = function () {
 GameView.prototype.handleGame = function (e) {
     // get Player's center pixel position within grid canvas bitmap
     let imageData = this.gridCtx.getImageData(this.game.player.pos[0], this.game.player.pos[1], 1, 1);
-    if (imageData.data[3] > 0) {
-        // Player's center pixel position has collided with the grid walls
-    }
-    this.game.moveObjects();
+    this.game.movePlayer(this.gridCtx);
+    //this.game.moveObjects();
     this.game.draw(this.gameCtx);
 };
 
@@ -191,6 +193,7 @@ module.exports = Orb;
   \***********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 80:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_object.js");
@@ -221,9 +224,18 @@ function Player(pos) {
 
 Util.inherits(Player, MovingObject);
 
-Player.prototype.move = function () {
-    this.pos = [this.pos[0] + this.vel[0],
-                this.pos[1] + this.vel[1]];
+Player.prototype.move = function (gridCtx) {
+    let newXPos = this.pos[0] + this.vel[0];
+    let newYPos = this.pos[1] + this.vel[1];
+    let imageData = gridCtx.getImageData(newXPos - DEFAULT.RADIUS, newYPos - DEFAULT.RADIUS, 2*DEFAULT.RADIUS, 2*DEFAULT.RADIUS).data
+    let isCollision = false; // check grid's Alpha channel for collision with Player
+    for (let i = 0; i < imageData.length; i+=3) {
+        if (imageData[i] > 0) {
+            isCollision = true;
+            break;
+        }
+    }
+    this.pos = isCollision ? this.pos : [newXPos, newYPos];
 }
 
 Player.prototype.direction = function (key) {

@@ -26,9 +26,18 @@ function Player(pos) {
 
 Util.inherits(Player, MovingObject);
 
-Player.prototype.move = function () {
-    this.pos = [this.pos[0] + this.vel[0],
-                this.pos[1] + this.vel[1]];
+Player.prototype.move = function (gridCtx) {
+    let newXPos = this.pos[0] + this.vel[0];
+    let newYPos = this.pos[1] + this.vel[1];
+    let imageData = gridCtx.getImageData(newXPos - DEFAULT.RADIUS, newYPos - DEFAULT.RADIUS, 2*DEFAULT.RADIUS, 2*DEFAULT.RADIUS).data
+    let isCollision = false; // check grid's Alpha channel for collision with Player
+    for (let i = 0; i < imageData.length; i+=3) {
+        if (imageData[i] > 0) {
+            isCollision = true;
+            break;
+        }
+    }
+    this.pos = isCollision ? this.pos : [newXPos, newYPos];
 }
 
 Player.prototype.direction = function (key) {

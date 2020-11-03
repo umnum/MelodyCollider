@@ -46,4 +46,9 @@ Game.prototype.moveObjects = function () {
     })
 };
 
+Game.prototype.movePlayer = function (gridCtx) {
+    // Player's center pixel position has collided with the grid walls
+    this.player.move(gridCtx);
+}
+
 module.exports = Game;

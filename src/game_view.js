@@ -13,10 +13,8 @@ GameView.prototype.start = function () {
 GameView.prototype.handleGame = function (e) {
     // get Player's center pixel position within grid canvas bitmap
     let imageData = this.gridCtx.getImageData(this.game.player.pos[0], this.game.player.pos[1], 1, 1);
-    if (imageData.data[3] > 0) {
-        // Player's center pixel position has collided with the grid walls
-    }
-    this.game.moveObjects();
+    this.game.movePlayer(this.gridCtx);
+    //this.game.moveObjects();
     this.game.draw(this.gameCtx);
 };
 
