@@ -20,4 +20,9 @@ function Orb(pos) {
 
 Util.inherits(Orb, MovingObject);
 
+Orb.prototype.move = function () {
+    this.pos = [this.pos[0] + this.vel[0],
+                this.pos[1] + this.vel[1]];
+}
+
 module.exports = Orb;

@@ -7,4 +7,5 @@ document.addEventListener("DOMContentLoaded", function () {
     // draw Orbs in Game
     const game = new Game();
     game.draw(ctx);
+    game.moveObjects();
 });

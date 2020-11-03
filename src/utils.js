@@ -7,10 +7,10 @@ const Util = {
     },
     randomVec(length) {
         const deg = 2 * Math.PI * Math.random();
-        return Util.scale([Math.sin(deg), Math.cos(deg)], length);
+        return (Util.scale([Math.sin(deg), Math.cos(deg)], length));
     },
     scale(vec, mag) {
-        return [vec[0] * mag, vec[1] * mag];
+        return [Math.round(vec[0] * mag), Math.round(vec[1] * mag)];
     }
 };
 

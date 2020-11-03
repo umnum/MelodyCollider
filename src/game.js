@@ -35,6 +35,9 @@ Game.prototype.draw = function (ctx) {
 
 Game.prototype.moveObjects = function () {
     // NUM_ORBS times: orb[i].move(ctx)
-}
+    this.orbs.forEach(function (orb) {
+        orb.move();
+    })
+};
 
 module.exports = Game;

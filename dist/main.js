@@ -46,7 +46,10 @@ Game.prototype.draw = function (ctx) {
 
 Game.prototype.moveObjects = function () {
     // NUM_ORBS times: orb[i].move(ctx)
-}
+    this.orbs.forEach(function (orb) {
+        orb.move();
+    })
+};
 
 module.exports = Game;
 
@@ -90,6 +93,7 @@ module.exports = MovingObject;
   \********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 28:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_object.js");
@@ -114,6 +118,11 @@ function Orb(pos) {
 
 Util.inherits(Orb, MovingObject);
 
+Orb.prototype.move = function () {
+    this.pos = [this.pos[0] + this.vel[0],
+                this.pos[1] + this.vel[1]];
+}
+
 module.exports = Orb;
 
 /***/ }),
@@ -135,10 +144,10 @@ const Util = {
     },
     randomVec(length) {
         const deg = 2 * Math.PI * Math.random();
-        return Util.scale([Math.sin(deg), Math.cos(deg)], length);
+        return (Util.scale([Math.sin(deg), Math.cos(deg)], length));
     },
     scale(vec, mag) {
-        return [vec[0] * mag, vec[1] * mag];
+        return [Math.round(vec[0] * mag), Math.round(vec[1] * mag)];
     }
 };
 
@@ -187,6 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // draw Orbs in Game
     const game = new Game();
     game.draw(ctx);
+    game.moveObjects();
 });
 })();
 
