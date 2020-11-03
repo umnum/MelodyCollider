@@ -4,7 +4,7 @@ function GameView(game, ctx) {
 }
 
 GameView.prototype.start = function () {
-    window.setInterval(this.handleGame.bind(this), 20);
+    window.setInterval(this.handleGame.bind(this), 2000);
 };
 
 GameView.prototype.handleGame = function (e) {

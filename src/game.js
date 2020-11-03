@@ -1,4 +1,5 @@
 const Orb = require("./orb");
+const Player = require("./player");
 
 const DIM_X = 700;
 const DIM_Y = 500;
@@ -7,6 +8,7 @@ const NUM_ORBS = 3;
 function Game() {
     // call addOrbs()
     this.orbs = this.addOrbs();
+    this.player = new Player(this.randomPosition());
 }
 
 Game.prototype.addOrbs = function () {
@@ -18,6 +20,10 @@ Game.prototype.addOrbs = function () {
     return orbs;
 };
 
+Game.prototype.allObjects = function () {
+    return [this.player].concat(this.orbs);
+}
+
 Game.prototype.randomPosition = function () {
     let randPosX = Math.floor(Math.random() * DIM_X);
     let randPosY = Math.floor(Math.random() * DIM_Y);
@@ -28,15 +34,15 @@ Game.prototype.draw = function (ctx) {
     // clearRect(ctx)
     // NUM_ORBS times: orb[i].draw(ctx)
     ctx.clearRect(0, 0, DIM_X, DIM_Y);
-    this.orbs.forEach(function (orb) {
-        orb.draw(ctx);
+    this.allObjects().forEach(function (object) {
+        object.draw(ctx);
     });
 }
 
 Game.prototype.moveObjects = function () {
     // NUM_ORBS times: orb[i].move(ctx)
-    this.orbs.forEach(function (orb) {
-        orb.move();
+    this.allObjects().forEach(function (object) {
+        object.move();
     })
 };
 

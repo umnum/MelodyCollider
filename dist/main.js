@@ -7,9 +7,11 @@
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 49:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
+const Player = __webpack_require__(/*! ./player */ "./src/player.js");
 
 const DIM_X = 700;
 const DIM_Y = 500;
@@ -18,6 +20,7 @@ const NUM_ORBS = 3;
 function Game() {
     // call addOrbs()
     this.orbs = this.addOrbs();
+    this.player = new Player(this.randomPosition());
 }
 
 Game.prototype.addOrbs = function () {
@@ -29,6 +32,10 @@ Game.prototype.addOrbs = function () {
     return orbs;
 };
 
+Game.prototype.allObjects = function () {
+    return [this.player].concat(this.orbs);
+}
+
 Game.prototype.randomPosition = function () {
     let randPosX = Math.floor(Math.random() * DIM_X);
     let randPosY = Math.floor(Math.random() * DIM_Y);
@@ -39,15 +46,15 @@ Game.prototype.draw = function (ctx) {
     // clearRect(ctx)
     // NUM_ORBS times: orb[i].draw(ctx)
     ctx.clearRect(0, 0, DIM_X, DIM_Y);
-    this.orbs.forEach(function (orb) {
-        orb.draw(ctx);
+    this.allObjects().forEach(function (object) {
+        object.draw(ctx);
     });
 }
 
 Game.prototype.moveObjects = function () {
     // NUM_ORBS times: orb[i].move(ctx)
-    this.orbs.forEach(function (orb) {
-        orb.move();
+    this.allObjects().forEach(function (object) {
+        object.move();
     })
 };
 
@@ -61,7 +68,6 @@ module.exports = Game;
   \**************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 15:0-14 */
 /***/ ((module) => {
 
 function GameView(game, ctx) {
@@ -70,7 +76,7 @@ function GameView(game, ctx) {
 }
 
 GameView.prototype.start = function () {
-    window.setInterval(this.handleGame.bind(this), 20);
+    window.setInterval(this.handleGame.bind(this), 2000);
 };
 
 GameView.prototype.handleGame = function (e) {
@@ -150,6 +156,42 @@ Orb.prototype.move = function () {
 }
 
 module.exports = Orb;
+
+/***/ }),
+
+/***/ "./src/player.js":
+/*!***********************!*\
+  !*** ./src/player.js ***!
+  \***********************/
+/*! unknown exports (runtime-defined) */
+/*! runtime requirements: module, __webpack_require__ */
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_object.js");
+const Util = __webpack_require__(/*! ./utils */ "./src/utils.js");
+
+const DEFAULT = {
+    COLOR: "gray",
+    RADIUS: 15,
+    SPEED: 3
+};
+
+function Player(pos) {
+    let properties = {
+        pos: pos,
+        vel: [0, 0],
+        radius: DEFAULT.RADIUS,
+        color: DEFAULT.COLOR
+    }
+    MovingObject.call(this, properties);
+}
+
+Util.inherits(Player, MovingObject);
+
+Player.prototype.move = function () {
+}
+
+module.exports = Player;
 
 /***/ }),
 
