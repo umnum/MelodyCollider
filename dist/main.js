@@ -193,7 +193,7 @@ module.exports = Orb;
   \***********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 80:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 94:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_object.js");
@@ -227,15 +227,29 @@ Util.inherits(Player, MovingObject);
 Player.prototype.move = function (gridCtx) {
     let newXPos = this.pos[0] + this.vel[0];
     let newYPos = this.pos[1] + this.vel[1];
-    let imageData = gridCtx.getImageData(newXPos - DEFAULT.RADIUS, newYPos - DEFAULT.RADIUS, 2*DEFAULT.RADIUS, 2*DEFAULT.RADIUS).data
-    let isCollision = false; // check grid's Alpha channel for collision with Player
-    for (let i = 0; i < imageData.length; i+=3) {
-        if (imageData[i] > 0) {
-            isCollision = true;
+    let imageDataX = gridCtx.getImageData(newXPos - DEFAULT.RADIUS, this.pos[1] - DEFAULT.RADIUS, 2*DEFAULT.RADIUS, 2*DEFAULT.RADIUS).data
+    let imageDataY = gridCtx.getImageData(this.pos[0] - DEFAULT.RADIUS, newYPos - DEFAULT.RADIUS, 2*DEFAULT.RADIUS, 2*DEFAULT.RADIUS).data
+    // check x-y collisions seperately, to allow smooth sliding along grid walls
+    let isCollisionX = false; // check grid's Alpha channel for collision with Player along x-axis
+    let isCollisionY = false; // check grid's Alpha channel for collision with Player along y-axis
+    for (let i = 0; i < imageDataX.length; i+=3) {
+        if (imageDataX[i] > 0) {
+            isCollisionX = true;
             break;
         }
     }
-    this.pos = isCollision ? this.pos : [newXPos, newYPos];
+    for (let i = 0; i < imageDataY.length; i+=3) {
+        if (imageDataY[i] > 0) {
+            isCollisionY = true;
+            break;
+        }
+    }
+    if (!isCollisionX) {
+        this.pos[0] = newXPos;
+    }
+    if (!isCollisionY) {
+        this.pos[1] = newYPos;
+    }
 }
 
 Player.prototype.direction = function (key) {
