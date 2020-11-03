@@ -24,22 +24,27 @@ Player.prototype.move = function () {
                 this.pos[1] + this.vel[1]];
 }
 
-Player.prototype.direction = function (key) {
+Player.prototype.direction = function (key, event) {
     switch (key) {
         case 'up':
-            this.vel = [0,-DEFAULT.SPEED];
+            this.vel[1] = -DEFAULT.SPEED;
             break;
         case 'down':
-            this.vel = [0,DEFAULT.SPEED];
+            this.vel[1] = DEFAULT.SPEED;
             break;
         case 'left':
-            this.vel = [-DEFAULT.SPEED,0];
+            this.vel[0] = -DEFAULT.SPEED;
             break;
         case 'right':
-            this.vel = [DEFAULT.SPEED,0];
+            this.vel[0] = DEFAULT.SPEED;
             break;
-        case 'keyup':
-            this.vel = [0,0];
+        case 'ArrowLeft':
+        case 'ArrowRight':
+            this.vel[0] = 0;
+            break;
+        case 'ArrowUp':
+        case 'ArrowDown':
+            this.vel[1] = 0;
             break;
     }
 }

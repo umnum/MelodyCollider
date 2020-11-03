@@ -12,4 +12,4 @@ document.addEventListener("DOMContentLoaded", function () {
     gameView.start();
 });
 
-document.addEventListener('keyup', function () {game.player.direction('keyup')});
+document.addEventListener('keyup', function (event) {game.player.direction(event.key)});

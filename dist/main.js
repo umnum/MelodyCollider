@@ -89,7 +89,6 @@ GameView.prototype.bindKeyHandlers = function (game) {
     key('down', function () {game.player.direction('down')});
     key('left', function () {game.player.direction('left')});
     key('right', function () {game.player.direction('right')});
-    key('keyup', function () {game.player.direction('keyup')});
     //key('enter', function () {alert('you pressed enter!')});
     //key('space', function () {alert('you pressed space!')});
 }
@@ -175,7 +174,7 @@ module.exports = Orb;
   \***********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 47:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 52:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_object.js");
@@ -204,22 +203,27 @@ Player.prototype.move = function () {
                 this.pos[1] + this.vel[1]];
 }
 
-Player.prototype.direction = function (key) {
+Player.prototype.direction = function (key, event) {
     switch (key) {
         case 'up':
-            this.vel = [0,-DEFAULT.SPEED];
+            this.vel[1] = -DEFAULT.SPEED;
             break;
         case 'down':
-            this.vel = [0,DEFAULT.SPEED];
+            this.vel[1] = DEFAULT.SPEED;
             break;
         case 'left':
-            this.vel = [-DEFAULT.SPEED,0];
+            this.vel[0] = -DEFAULT.SPEED;
             break;
         case 'right':
-            this.vel = [DEFAULT.SPEED,0];
+            this.vel[0] = DEFAULT.SPEED;
             break;
-        case 'keyup':
-            this.vel = [0,0];
+        case 'ArrowLeft':
+        case 'ArrowRight':
+            this.vel[0] = 0;
+            break;
+        case 'ArrowUp':
+        case 'ArrowDown':
+            this.vel[1] = 0;
             break;
     }
 }
@@ -302,7 +306,7 @@ document.addEventListener("DOMContentLoaded", function () {
     gameView.start();
 });
 
-document.addEventListener('keyup', function () {game.player.direction('keyup')});
+document.addEventListener('keyup', function (event) {game.player.direction(event.key)});
 })();
 
 /******/ })()
