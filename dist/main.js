@@ -1,6 +1,57 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./src/game.js":
+/*!*********************!*\
+  !*** ./src/game.js ***!
+  \*********************/
+/*! unknown exports (runtime-defined) */
+/*! runtime requirements: module, __webpack_require__ */
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
+
+const DIM_X = 700;
+const DIM_Y = 500;
+const NUM_ORBS = 3;
+
+function Game() {
+    // call addOrbs()
+    this.orbs = this.addOrbs();
+}
+
+Game.prototype.addOrbs = function () {
+    // NUM_ORBS times: new orb
+    let orbs = [];
+    for (let i = 0; i < NUM_ORBS; i++) {
+        orbs.push(new Orb(this.randomPosition()));
+    }
+    return orbs;
+};
+
+Game.prototype.randomPosition = function () {
+    let randPosX = Math.floor(Math.random() * DIM_X);
+    let randPosY = Math.floor(Math.random() * DIM_Y);
+    return [randPosX, randPosY];
+}
+
+Game.prototype.draw = function (ctx) {
+    // clearRect(ctx)
+    // NUM_ORBS times: orb[i].draw(ctx)
+    ctx.clearRect(0, 0, DIM_X, DIM_Y);
+    this.orbs.forEach(function (orb) {
+        orb.draw(ctx);
+    });
+}
+
+Game.prototype.moveObjects = function () {
+    // NUM_ORBS times: orb[i].move(ctx)
+}
+
+module.exports = Game;
+
+/***/ }),
+
 /***/ "./src/moving_object.js":
 /*!******************************!*\
   !*** ./src/moving_object.js ***!
@@ -21,7 +72,7 @@ MovingObject.prototype.draw = function (ctx) {
     ctx.beginPath();
     ctx.arc(this.pos[0], this.pos[1], this.radius, 0, 2*Math.PI);
     ctx.closePath();
-    // circle no border
+    // circle has no border
     ctx.strokeStyle = 'transparent';
     // fill circle with MovingObject color property
     ctx.fillStyle = this.color;
@@ -39,7 +90,6 @@ module.exports = MovingObject;
   \********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 23:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_object.js");
@@ -128,25 +178,15 @@ module.exports = Util;
   \********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: __webpack_require__ */
-const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_object.js");
-const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
+const Game = __webpack_require__(/*! ./game */ "./src/game.js");
 
 document.addEventListener("DOMContentLoaded", function () {
     const canvas = document.getElementById("game-canvas");
     const ctx = canvas.getContext('2d');
 
-    // draw a MovingObject
-    const object = new MovingObject({
-        pos: [200, 200], // center position
-        vel: [10, 10], // [x,y] vector velocity
-        radius: 10,
-        color: "gray"
-    });
-    object.draw(ctx);
-
-    // draw an Orb
-    const orb = new Orb([300, 300])
-    orb.draw(ctx);
+    // draw Orbs in Game
+    const game = new Game();
+    game.draw(ctx);
 });
 })();
 

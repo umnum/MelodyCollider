@@ -10,7 +10,7 @@ MovingObject.prototype.draw = function (ctx) {
     ctx.beginPath();
     ctx.arc(this.pos[0], this.pos[1], this.radius, 0, 2*Math.PI);
     ctx.closePath();
-    // circle no border
+    // circle has no border
     ctx.strokeStyle = 'transparent';
     // fill circle with MovingObject color property
     ctx.fillStyle = this.color;
