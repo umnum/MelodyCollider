@@ -4,11 +4,13 @@ const GameView = require("./game_view");
 const game = new Game();
 
 document.addEventListener("DOMContentLoaded", function () {
-    const canvas = document.getElementById("game-canvas");
-    const ctx = canvas.getContext('2d');
+    const gameCanvas = document.getElementById("game-canvas");
+    const gridCanvas = document.getElementById("grid-canvas");
+    const gameCtx = gameCanvas.getContext('2d');
+    const gridCtx = gridCanvas.getContext('2d');
 
     // continuously draw moving Orbs in Game
-    const gameView = new GameView(game, ctx);
+    const gameView = new GameView(game, gameCtx, gridCtx);
     gameView.start();
 });
 

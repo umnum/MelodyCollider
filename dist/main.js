@@ -67,22 +67,39 @@ module.exports = Game;
   \**************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
+/*! CommonJS bailout: module.exports is used directly at 41:0-14 */
 /***/ ((module) => {
 
-function GameView(game, ctx) {
+function GameView(game, gameCtx, gridCtx) {
     this.game = game;
-    this.ctx = ctx;
+    this.gameCtx = gameCtx;
+    this.gridCtx = gridCtx;
 }
 
 GameView.prototype.start = function () {
     window.setInterval(this.handleGame.bind(this), 20);
     this.bindKeyHandlers(this.game);
+    this.drawGrid();
 };
 
 GameView.prototype.handleGame = function (e) {
+    // get Player's center pixel position within grid canvas bitmap
+    let imageData = this.gridCtx.getImageData(this.game.player.pos[0], this.game.player.pos[1], 1, 1);
+    if (imageData.data[3] > 0) {
+        // Player's center pixel position has collided with the grid walls
+    }
     this.game.moveObjects();
-    this.game.draw(this.ctx);
+    this.game.draw(this.gameCtx);
 };
+
+GameView.prototype.drawGrid = function () {
+    this.gridCtx.beginPath();
+    this.gridCtx.strokeStyle = "black";
+    this.gridCtx.fill();
+    this.gridCtx.rect(10, 10, 680, 480)
+    this.gridCtx.lineWidth = 20;
+    this.gridCtx.stroke();
+}
 
 GameView.prototype.bindKeyHandlers = function (game) {
     key('up', function () {game.player.direction('up')});
@@ -174,7 +191,6 @@ module.exports = Orb;
   \***********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 71:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_object.js");
@@ -317,11 +333,13 @@ const GameView = __webpack_require__(/*! ./game_view */ "./src/game_view.js");
 const game = new Game();
 
 document.addEventListener("DOMContentLoaded", function () {
-    const canvas = document.getElementById("game-canvas");
-    const ctx = canvas.getContext('2d');
+    const gameCanvas = document.getElementById("game-canvas");
+    const gridCanvas = document.getElementById("grid-canvas");
+    const gameCtx = gameCanvas.getContext('2d');
+    const gridCtx = gridCanvas.getContext('2d');
 
     // continuously draw moving Orbs in Game
-    const gameView = new GameView(game, ctx);
+    const gameView = new GameView(game, gameCtx, gridCtx);
     gameView.start();
 });
 
