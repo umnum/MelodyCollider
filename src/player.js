@@ -24,7 +24,7 @@ Player.prototype.move = function () {
                 this.pos[1] + this.vel[1]];
 }
 
-Player.prototype.direction = function (key, event) {
+Player.prototype.direction = function (key) {
     switch (key) {
         case 'up':
             this.vel[1] = -DEFAULT.SPEED;
