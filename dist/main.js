@@ -174,7 +174,7 @@ module.exports = Orb;
   \***********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 52:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 71:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_object.js");
@@ -185,6 +185,13 @@ const DEFAULT = {
     RADIUS: 15,
     SPEED: 3
 };
+
+const isPressed = {
+    up: false,
+    down: false,
+    left: false,
+    right: false,
+}
 
 function Player(pos) {
     let properties = {
@@ -206,24 +213,36 @@ Player.prototype.move = function () {
 Player.prototype.direction = function (key) {
     switch (key) {
         case 'up':
+            isPressed.up = true;
             this.vel[1] = -DEFAULT.SPEED;
             break;
         case 'down':
+            isPressed.down = true;
             this.vel[1] = DEFAULT.SPEED;
             break;
         case 'left':
+            isPressed.left = true;
             this.vel[0] = -DEFAULT.SPEED;
             break;
         case 'right':
+            isPressed.right = true;
             this.vel[0] = DEFAULT.SPEED;
             break;
         case 'ArrowLeft':
+            isPressed.left = false;
+            this.vel[0] = isPressed.right ? DEFAULT.SPEED : 0;
+            break;
         case 'ArrowRight':
-            this.vel[0] = 0;
+            isPressed.right = false;
+            this.vel[0] = isPressed.left ? -DEFAULT.SPEED : 0;
             break;
         case 'ArrowUp':
+            isPressed.up = false;
+            this.vel[1] = isPressed.down ? DEFAULT.SPEED : 0;
+            break;
         case 'ArrowDown':
-            this.vel[1] = 0;
+            isPressed.down = false;
+            this.vel[1] = isPressed.up ? -DEFAULT.SPEED : 0;
             break;
     }
 }
