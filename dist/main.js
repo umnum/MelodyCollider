@@ -7,7 +7,6 @@
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 49:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -76,13 +75,23 @@ function GameView(game, ctx) {
 }
 
 GameView.prototype.start = function () {
-    window.setInterval(this.handleGame.bind(this), 2000);
+    window.setInterval(this.handleGame.bind(this), 20);
+    this.bindKeyHandlers(this.game);
 };
 
 GameView.prototype.handleGame = function (e) {
     this.game.moveObjects();
     this.game.draw(this.ctx);
 };
+
+GameView.prototype.bindKeyHandlers = function (game) {
+    key('up', function () {game.player.direction('up')});
+    key('down', function () {game.player.direction('down')});
+    key('left', function () {game.player.direction('left')});
+    key('right', function () {game.player.direction('right')});
+    //key('enter', function () {alert('you pressed enter!')});
+    //key('space', function () {alert('you pressed space!')});
+}
 
 module.exports = GameView;
 
@@ -165,6 +174,7 @@ module.exports = Orb;
   \***********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 44:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_object.js");
@@ -189,6 +199,25 @@ function Player(pos) {
 Util.inherits(Player, MovingObject);
 
 Player.prototype.move = function () {
+    this.pos = [this.pos[0] + this.vel[0],
+                this.pos[1] + this.vel[1]];
+}
+
+Player.prototype.direction = function (key) {
+    switch (key) {
+        case 'up':
+            this.vel = [0,-DEFAULT.SPEED];
+            break;
+        case 'down':
+            this.vel = [0,DEFAULT.SPEED];
+            break;
+        case 'left':
+            this.vel = [-DEFAULT.SPEED,0];
+            break;
+        case 'right':
+            this.vel = [DEFAULT.SPEED,0];
+            break;
+    }
 }
 
 module.exports = Player;
