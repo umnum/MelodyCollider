@@ -18,6 +18,7 @@ GameView.prototype.bindKeyHandlers = function (game) {
     key('down', function () {game.player.direction('down')});
     key('left', function () {game.player.direction('left')});
     key('right', function () {game.player.direction('right')});
+    key('keyup', function () {game.player.direction('keyup')});
     //key('enter', function () {alert('you pressed enter!')});
     //key('space', function () {alert('you pressed space!')});
 }

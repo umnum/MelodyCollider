@@ -38,6 +38,9 @@ Player.prototype.direction = function (key) {
         case 'right':
             this.vel = [DEFAULT.SPEED,0];
             break;
+        case 'keyup':
+            this.vel = [0,0];
+            break;
     }
 }
 

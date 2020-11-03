@@ -89,6 +89,7 @@ GameView.prototype.bindKeyHandlers = function (game) {
     key('down', function () {game.player.direction('down')});
     key('left', function () {game.player.direction('left')});
     key('right', function () {game.player.direction('right')});
+    key('keyup', function () {game.player.direction('keyup')});
     //key('enter', function () {alert('you pressed enter!')});
     //key('space', function () {alert('you pressed space!')});
 }
@@ -174,7 +175,7 @@ module.exports = Orb;
   \***********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 44:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 47:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_object.js");
@@ -216,6 +217,9 @@ Player.prototype.direction = function (key) {
             break;
         case 'right':
             this.vel = [DEFAULT.SPEED,0];
+            break;
+        case 'keyup':
+            this.vel = [0,0];
             break;
     }
 }
@@ -287,16 +291,18 @@ module.exports = Util;
 const Game = __webpack_require__(/*! ./game */ "./src/game.js");
 const GameView = __webpack_require__(/*! ./game_view */ "./src/game_view.js");
 
+const game = new Game();
+
 document.addEventListener("DOMContentLoaded", function () {
     const canvas = document.getElementById("game-canvas");
     const ctx = canvas.getContext('2d');
-
-    const game = new Game();
 
     // continuously draw moving Orbs in Game
     const gameView = new GameView(game, ctx);
     gameView.start();
 });
+
+document.addEventListener('keyup', function () {game.player.direction('keyup')});
 })();
 
 /******/ })()
