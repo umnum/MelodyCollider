@@ -55,6 +55,33 @@ module.exports = Game;
 
 /***/ }),
 
+/***/ "./src/game_view.js":
+/*!**************************!*\
+  !*** ./src/game_view.js ***!
+  \**************************/
+/*! unknown exports (runtime-defined) */
+/*! runtime requirements: module */
+/*! CommonJS bailout: module.exports is used directly at 15:0-14 */
+/***/ ((module) => {
+
+function GameView(game, ctx) {
+    this.game = game;
+    this.ctx = ctx;
+}
+
+GameView.prototype.start = function () {
+    window.setInterval(this.handleGame.bind(this), 20);
+};
+
+GameView.prototype.handleGame = function (e) {
+    this.game.moveObjects();
+    this.game.draw(this.ctx);
+};
+
+module.exports = GameView;
+
+/***/ }),
+
 /***/ "./src/moving_object.js":
 /*!******************************!*\
   !*** ./src/moving_object.js ***!
@@ -93,7 +120,6 @@ module.exports = MovingObject;
   \********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 28:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_object.js");
@@ -188,15 +214,17 @@ module.exports = Util;
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: __webpack_require__ */
 const Game = __webpack_require__(/*! ./game */ "./src/game.js");
+const GameView = __webpack_require__(/*! ./game_view */ "./src/game_view.js");
 
 document.addEventListener("DOMContentLoaded", function () {
     const canvas = document.getElementById("game-canvas");
     const ctx = canvas.getContext('2d');
 
-    // draw Orbs in Game
     const game = new Game();
-    game.draw(ctx);
-    game.moveObjects();
+
+    // continuously draw moving Orbs in Game
+    const gameView = new GameView(game, ctx);
+    gameView.start();
 });
 })();
 
