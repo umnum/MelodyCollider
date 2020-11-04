@@ -41,7 +41,7 @@ Game.prototype.addOrbs = function (orbPositions, orbColors, numOrbs) {
 };
 
 Game.prototype.removeOrb = function() {
-    return this.orbs.pop();
+    return this.orbs.shift();
 }
 
 Game.prototype.allObjects = function () {
@@ -62,11 +62,11 @@ Game.prototype.draw = function (gameCtx) {
 }
 
 Game.prototype.moveObjects = function (gridCtx, gameCtx) {
-    let isRemoveOrb = false;
+    let isOrbRemoved = false;
     let that = this;
     this.orbs.forEach(function (orb) {
-        isRemoveOrb = orb.move(gridCtx, gameCtx, that.player.getPosition());
-        if (isRemoveOrb) {
+        isOrbRemoved = orb.move(gridCtx, gameCtx, that.player.getPosition());
+        if (isOrbRemoved) {
             if (orb.color !== that.removeOrb().color) {
                 that.levelStart('level 1')
             }

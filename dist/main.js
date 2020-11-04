@@ -48679,7 +48679,7 @@ Game.prototype.addOrbs = function (orbPositions, orbColors, numOrbs) {
 };
 
 Game.prototype.removeOrb = function() {
-    return this.orbs.pop();
+    return this.orbs.shift();
 }
 
 Game.prototype.allObjects = function () {
@@ -48700,11 +48700,11 @@ Game.prototype.draw = function (gameCtx) {
 }
 
 Game.prototype.moveObjects = function (gridCtx, gameCtx) {
-    let isRemoveOrb = false;
+    let isOrbRemoved = false;
     let that = this;
     this.orbs.forEach(function (orb) {
-        isRemoveOrb = orb.move(gridCtx, gameCtx, that.player.getPosition());
-        if (isRemoveOrb) {
+        isOrbRemoved = orb.move(gridCtx, gameCtx, that.player.getPosition());
+        if (isOrbRemoved) {
             if (orb.color !== that.removeOrb().color) {
                 that.levelStart('level 1')
             }
@@ -48837,9 +48837,13 @@ function Orb(pos, color) {
 Util.inherits(Orb, MovingObject);
 
 Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
-    //TODO: implement orb collision physics
     let newXPos = this.pos[0] + this.vel[0];
     let newYPos = this.pos[1] + this.vel[1];
+    let hasCollided = (Math.sqrt(Math.pow(playerPos[0] - newXPos, 2) +
+                                 Math.pow(playerPos[1] - newYPos, 2)) < DEFAULTS.RADIUS*2 + 4);
+            if (hasCollided) {
+                return hasCollided;
+            };
     // only need to check orb's image border edge that faces the direction of the collision
     let gridImageDataX, gridImageDataY, gameImageDataX, gameImageDataY;
     if (this.vel[0] < 0) {
@@ -48899,9 +48903,6 @@ Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
         newYPos = this.pos[1] + this.vel[1];
         this.pos[1] = newYPos;
     }
-    return ((isCollisionX || isCollisionY) && 
-            (Math.abs(playerPos[0]-this.pos[0]) <= DEFAULTS.RADIUS ||
-            Math.abs(playerPos[1]-this.pos[1]) <= DEFAULTS.RADIUS));
 }
 
 module.exports = Orb;
