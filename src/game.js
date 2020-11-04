@@ -20,22 +20,24 @@ Game.prototype.levelStart = function (level) {
         case 'level 1':
             orbColors = ["red", "green", "blue"];
             orbPositions = [[80, 80], [100, 100] , [200, 200]];
-            this.orbs = this.addOrbs(orbPositions, orbColors, 3);
-            this.player.setPosition([50,50]);
+            orbNotes = ["c4", "a4", "b4"]
+            this.orbs = this.addOrbs(orbPositions, orbColors, orbNotes, 3);
+            this.player.setPosition([400,400]);
             break;
         case 'level 2':
             orbColors = ["red", "green", "blue", "purple", "orange"];
+            orbNotes = ["c4", "a4", "b4", "e4", "d4"];
             orbPositions = [[80, 80], [100, 100] , [200, 200], [300, 300], [400, 400]];
-            this.orbs = this.addOrbs(orbPositions, orbColors, 5);
+            this.orbs = this.addOrbs(orbPositions, orbColors, orbNotes, 5);
             this.player.setPosition([150,150]);
             break;
     }
 }
 
-Game.prototype.addOrbs = function (orbPositions, orbColors, numOrbs) {
+Game.prototype.addOrbs = function (orbPositions, orbColors, orbNotes, numOrbs) {
     let orbs = [];
     for (i = 0; i < numOrbs; i++) {
-        orbs.push(new Orb(orbPositions[i], orbColors[i]));
+        orbs.push(new Orb(orbPositions[i], orbColors[i], orbNotes[i]));
     }
     return orbs;
 };

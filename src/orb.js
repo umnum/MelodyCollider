@@ -1,12 +1,13 @@
 const MovingObject = require("./moving_object");
 const Util = require("./utils");
+const Tone = require("tone");
 
 const DEFAULTS = {
     RADIUS: 15,
     SPEED: 3
 };
 
-function Orb(pos, color) {
+function Orb(pos, color, note) {
     let properties = {
         pos: pos,
         vel: Util.randomVec(DEFAULTS.SPEED),
@@ -15,11 +16,42 @@ function Orb(pos, color) {
     };
 
     MovingObject.call(this, properties);
+
+    // play note at random intervals between 5 and 20 frames
+    this.countdown = 100 + Math.floor(Math.random()*200); 
+    this.note = note;
+    this.synth = new Tone.AMSynth({
+        harmonicity: 3/1,
+        detune: 0,
+        oscillator: {
+            type: "sine"
+        },
+        envelope: {
+            attack: 0.01,
+            decay: 0.1,
+            sustain: 0.5,
+            release: 0.7,
+        },
+        modulation: {
+            type: "sine"
+        },
+        modulationEnvelope: {
+            attack: 0.05,
+            decay: 0.1,
+            sustain: 1,
+            release: 0.5
+        }
+    }).toDestination();
 }
 
 Util.inherits(Orb, MovingObject);
 
 Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
+    if (this.countdown === 0) {
+        this.countdown = 400 + Math.floor(Math.random()*100);
+        this.synth.triggerAttackRelease(this.note, "16n");
+    }
+    this.countdown--;
     let newXPos = this.pos[0] + this.vel[0];
     let newYPos = this.pos[1] + this.vel[1];
     let hasCollided = (Math.sqrt(Math.pow(playerPos[0] - newXPos, 2) +

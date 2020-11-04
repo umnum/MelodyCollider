@@ -48633,7 +48633,7 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 81:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 83:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -48658,22 +48658,24 @@ Game.prototype.levelStart = function (level) {
         case 'level 1':
             orbColors = ["red", "green", "blue"];
             orbPositions = [[80, 80], [100, 100] , [200, 200]];
-            this.orbs = this.addOrbs(orbPositions, orbColors, 3);
-            this.player.setPosition([50,50]);
+            orbNotes = ["c4", "a4", "b4"]
+            this.orbs = this.addOrbs(orbPositions, orbColors, orbNotes, 3);
+            this.player.setPosition([400,400]);
             break;
         case 'level 2':
             orbColors = ["red", "green", "blue", "purple", "orange"];
+            orbNotes = ["c4", "a4", "b4", "e4", "d4"];
             orbPositions = [[80, 80], [100, 100] , [200, 200], [300, 300], [400, 400]];
-            this.orbs = this.addOrbs(orbPositions, orbColors, 5);
+            this.orbs = this.addOrbs(orbPositions, orbColors, orbNotes, 5);
             this.player.setPosition([150,150]);
             break;
     }
 }
 
-Game.prototype.addOrbs = function (orbPositions, orbColors, numOrbs) {
+Game.prototype.addOrbs = function (orbPositions, orbColors, orbNotes, numOrbs) {
     let orbs = [];
     for (i = 0; i < numOrbs; i++) {
-        orbs.push(new Orb(orbPositions[i], orbColors[i]));
+        orbs.push(new Orb(orbPositions[i], orbColors[i], orbNotes[i]));
     }
     return orbs;
 };
@@ -48817,13 +48819,14 @@ module.exports = MovingObject;
 
 const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_object.js");
 const Util = __webpack_require__(/*! ./utils */ "./src/utils.js");
+const Tone = __webpack_require__(/*! tone */ "./node_modules/tone/build/esm/index.js");
 
 const DEFAULTS = {
     RADIUS: 15,
     SPEED: 3
 };
 
-function Orb(pos, color) {
+function Orb(pos, color, note) {
     let properties = {
         pos: pos,
         vel: Util.randomVec(DEFAULTS.SPEED),
@@ -48832,11 +48835,42 @@ function Orb(pos, color) {
     };
 
     MovingObject.call(this, properties);
+
+    // play note at random intervals between 5 and 20 frames
+    this.countdown = 100 + Math.floor(Math.random()*200); 
+    this.note = note;
+    this.synth = new Tone.AMSynth({
+        harmonicity: 3/1,
+        detune: 0,
+        oscillator: {
+            type: "sine"
+        },
+        envelope: {
+            attack: 0.01,
+            decay: 0.1,
+            sustain: 0.5,
+            release: 0.7,
+        },
+        modulation: {
+            type: "sine"
+        },
+        modulationEnvelope: {
+            attack: 0.05,
+            decay: 0.1,
+            sustain: 1,
+            release: 0.5
+        }
+    }).toDestination();
 }
 
 Util.inherits(Orb, MovingObject);
 
 Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
+    if (this.countdown === 0) {
+        this.countdown = 400 + Math.floor(Math.random()*100);
+        this.synth.triggerAttackRelease(this.note, "16n");
+    }
+    this.countdown--;
     let newXPos = this.pos[0] + this.vel[0];
     let newYPos = this.pos[1] + this.vel[1];
     let hasCollided = (Math.sqrt(Math.pow(playerPos[0] - newXPos, 2) +
