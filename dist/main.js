@@ -48646,7 +48646,7 @@ const DIM_Y = 500;
 function Game() {
     this.player = new Player();
     this.orbs = [];
-    this.currentLevel = 3;
+    this.currentLevel = 1;
     this.isIntroSequence = false;
     this.orbColors = [];
     Tone.Transport.start(0);
@@ -48736,7 +48736,7 @@ Game.prototype.moveObjects = function (gridCtx, gameCtx) {
     this.orbs.forEach(function (orb, idx) {
         isOrbRemoved = orb.move(gridCtx, gameCtx, that.player.getPosition());
         if (isOrbRemoved) {
-            let removedOrbColor = that.removeOrb(idx).color;
+            let removedOrbColor = that.removeOrb(idx).orgColor;
             let targetOrbColor = that.orbColors.shift();
             if (removedOrbColor !== targetOrbColor) {
                 let repeatLevel = 'level ' + that.currentLevel;
