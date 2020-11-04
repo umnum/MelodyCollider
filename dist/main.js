@@ -15,7 +15,7 @@ const Player = __webpack_require__(/*! ./player */ "./src/player.js");
 
 const DIM_X = 700;
 const DIM_Y = 500;
-const NUM_ORBS = 3;
+const NUM_ORBS = 10;
 
 function Game() {
     this.orbs = this.addOrbs();
@@ -35,21 +35,21 @@ Game.prototype.allObjects = function () {
 }
 
 Game.prototype.randomPosition = function () {
-    let randPosX = Math.floor(20 + Math.random() * DIM_X * .8);
-    let randPosY = Math.floor(20 + Math.random() * DIM_Y * .8);
+    let randPosX = Math.floor(40 + Math.random() * DIM_X * .6);
+    let randPosY = Math.floor(40 + Math.random() * DIM_Y * .6);
     return [randPosX, randPosY];
 }
 
-Game.prototype.draw = function (ctx) {
-    ctx.clearRect(0, 0, DIM_X, DIM_Y);
+Game.prototype.draw = function (gameCtx) {
+    gameCtx.clearRect(0, 0, DIM_X, DIM_Y);
     this.allObjects().forEach(function (object) {
-        object.draw(ctx);
+        object.draw(gameCtx);
     });
 }
 
-Game.prototype.moveObjects = function (gridCtx) {
+Game.prototype.moveObjects = function (gridCtx, gameCtx) {
     this.allObjects().forEach(function (object) {
-        object.move(gridCtx);
+        object.move(gridCtx, gameCtx);
     })
 };
 
@@ -78,7 +78,7 @@ GameView.prototype.start = function () {
 };
 
 GameView.prototype.handleGame = function (e) {
-    this.game.moveObjects(this.gridCtx);
+    this.game.moveObjects(this.gridCtx, this.gameCtx);
     this.game.draw(this.gameCtx);
 };
 
@@ -166,43 +166,68 @@ function Orb(pos) {
 
 Util.inherits(Orb, MovingObject);
 
-Orb.prototype.move = function (gridCtx) {
-    //TODO: implement wall collision physics
+Orb.prototype.move = function (gridCtx, gameCtx) {
+    //TODO: implement orb collision physics
     let newXPos = this.pos[0] + this.vel[0];
     let newYPos = this.pos[1] + this.vel[1];
-    let imageDataX = gridCtx.getImageData(newXPos - DEFAULTS.RADIUS, this.pos[1] - DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS).data
-    let imageDataY = gridCtx.getImageData(this.pos[0] - DEFAULTS.RADIUS, newYPos - DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS).data
-    // check x-y collisions seperately, to allow smooth sliding along grid walls
+    // only need to check orb's image border edge that faces the direction of the collision
+    let gridImageDataX, gridImageDataY, gameImageDataX, gameImageDataY;
+    if (this.vel[0] < 0) {
+        gridImageDataX = gridCtx.getImageData(newXPos - DEFAULTS.RADIUS, this.pos[1] - DEFAULTS.RADIUS, 1, 2*DEFAULTS.RADIUS).data
+        gameImageDataX = gameCtx.getImageData(newXPos - DEFAULTS.RADIUS, this.pos[1] - DEFAULTS.RADIUS, 1, 2*DEFAULTS.RADIUS).data
+    }
+    else {
+        gridImageDataX = gridCtx.getImageData(newXPos + DEFAULTS.RADIUS, this.pos[1] - DEFAULTS.RADIUS, 1, 2*DEFAULTS.RADIUS).data
+        gameImageDataX = gameCtx.getImageData(newXPos + DEFAULTS.RADIUS, this.pos[1] - DEFAULTS.RADIUS, 1, 2*DEFAULTS.RADIUS).data
+    }
+    if (this.vel[1] < 0) {
+        gridImageDataY = gridCtx.getImageData(this.pos[0] - DEFAULTS.RADIUS, newYPos - DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS, 1).data
+        gameImageDataY = gameCtx.getImageData(this.pos[0] - DEFAULTS.RADIUS, newYPos - DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS, 1).data
+    }
+    else {
+        gridImageDataY = gridCtx.getImageData(this.pos[0] - DEFAULTS.RADIUS, newYPos + DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS, 1).data
+        gameImageDataY = gameCtx.getImageData(this.pos[0] - DEFAULTS.RADIUS, newYPos + DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS, 1).data
+    }
     let isCollisionX = false; // check grid's Alpha channel for collision with Player along x-axis
     let isCollisionY = false; // check grid's Alpha channel for collision with Player along y-axis
-    for (let i = 0; i < imageDataX.length; i+=3) {
-        if (imageDataX[i] > 0) {
+    for (let i = 0; i < gridImageDataX.length; i+=3) {
+        if (gridImageDataX[i] > 0) {
             isCollisionX = true;
             break;
         }
     }
-    for (let i = 0; i < imageDataY.length; i+=3) {
-        if (imageDataY[i] > 0) {
+    for (let i = 0; i < gameImageDataX.length; i+=3) {
+        if (gameImageDataX[i] > 0) {
+            isCollisionX = true;
+            break;
+        }
+    }
+    for (let i = 0; i < gridImageDataY.length; i+=3) {
+        if (gridImageDataY[i] > 0) {
             isCollisionY = true;
             break;
         }
     }
-    if (!isCollisionX) {
-        //this.vel[0] *= -1;
+    for (let i = 0; i < gameImageDataY.length; i+=3) {
+        if (gameImageDataY[i] > 0) {
+            isCollisionY = true;
+            break;
+        }
+    }
+    if (isCollisionX) {
+        this.vel[0] *= -1;
+    }
+    else {
         newXPos = this.pos[0] + this.vel[0];
         this.pos[0] = newXPos;
     }
-    else {
-        this.vel[0] *= -1;
-    }
 
-    if (!isCollisionY) {
-        //this.vel[1] *= -1;
+    if (isCollisionY) {
+        this.vel[1] *= -1;
+    }
+    else {
         newYPos = this.pos[1] + this.vel[1];
         this.pos[1] = newYPos;
-    }
-    else {
-        this.vel[1] *= -1;
     }
 }
 
@@ -246,7 +271,7 @@ function Player(pos) {
 
 Util.inherits(Player, MovingObject);
 
-Player.prototype.move = function (gridCtx) {
+Player.prototype.move = function (gridCtx, gameCtx) {
     let newXPos = this.pos[0] + this.vel[0];
     let newYPos = this.pos[1] + this.vel[1];
     let imageDataX = gridCtx.getImageData(newXPos - DEFAULT.RADIUS, this.pos[1] - DEFAULT.RADIUS, 2*DEFAULT.RADIUS, 2*DEFAULT.RADIUS).data

@@ -11,7 +11,7 @@ GameView.prototype.start = function () {
 };
 
 GameView.prototype.handleGame = function (e) {
-    this.game.moveObjects(this.gridCtx);
+    this.game.moveObjects(this.gridCtx, this.gameCtx);
     this.game.draw(this.gameCtx);
 };
 

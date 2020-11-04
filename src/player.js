@@ -26,7 +26,7 @@ function Player(pos) {
 
 Util.inherits(Player, MovingObject);
 
-Player.prototype.move = function (gridCtx) {
+Player.prototype.move = function (gridCtx, gameCtx) {
     let newXPos = this.pos[0] + this.vel[0];
     let newYPos = this.pos[1] + this.vel[1];
     let imageDataX = gridCtx.getImageData(newXPos - DEFAULT.RADIUS, this.pos[1] - DEFAULT.RADIUS, 2*DEFAULT.RADIUS, 2*DEFAULT.RADIUS).data
