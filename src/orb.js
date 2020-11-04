@@ -18,8 +18,11 @@ function Orb(pos, color, note) {
     MovingObject.call(this, properties);
 
     // play note at random intervals between 5 and 20 frames
-    this.countdown = 100 + Math.floor(Math.random()*200); 
+    this.audioCountdown = 100 + Math.floor(Math.random()*100); 
+    this.visualCountdown = 0;
     this.note = note;
+    this.orgColor = this.color;
+    this.flashColor = "magenta";
     this.synth = new Tone.AMSynth({
         harmonicity: 3/1,
         detune: 0,
@@ -47,11 +50,19 @@ function Orb(pos, color, note) {
 Util.inherits(Orb, MovingObject);
 
 Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
-    if (this.countdown === 0) {
-        this.countdown = 400 + Math.floor(Math.random()*100);
+    if (this.audioCountdown === 0) {
+        this.audioCountdown = 100 + Math.floor(Math.random()*100);
         this.synth.triggerAttackRelease(this.note, "16n");
+        this.visualCountdown = 20;
+        this.color = this.flashColor;
     }
-    this.countdown--;
+    this.audioCountdown--;
+    if (this.visualCountdown > 0) {
+        this.visualCountdown--;
+    }
+    else if (this.visualCountdown === 0) {
+        this.color = this.orgColor;
+    }
     let newXPos = this.pos[0] + this.vel[0];
     let newYPos = this.pos[1] + this.vel[1];
     let hasCollided = (Math.sqrt(Math.pow(playerPos[0] - newXPos, 2) +

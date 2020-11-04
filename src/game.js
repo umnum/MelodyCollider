@@ -29,7 +29,7 @@ Game.prototype.levelStart = function (level) {
             orbNotes = ["c4", "a4", "b4", "e4", "d4"];
             orbPositions = [[80, 80], [100, 100] , [200, 200], [300, 300], [400, 400]];
             this.orbs = this.addOrbs(orbPositions, orbColors, orbNotes, 5);
-            this.player.setPosition([150,150]);
+            this.player.setPosition([450,450]);
             break;
     }
 }
