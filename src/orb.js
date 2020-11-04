@@ -19,7 +19,7 @@ function Orb(pos, color) {
 
 Util.inherits(Orb, MovingObject);
 
-Orb.prototype.move = function (gridCtx, gameCtx) {
+Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
     //TODO: implement orb collision physics
     let newXPos = this.pos[0] + this.vel[0];
     let newYPos = this.pos[1] + this.vel[1];
@@ -82,6 +82,9 @@ Orb.prototype.move = function (gridCtx, gameCtx) {
         newYPos = this.pos[1] + this.vel[1];
         this.pos[1] = newYPos;
     }
+    return ((isCollisionX || isCollisionY) && 
+            (Math.abs(playerPos[0]-this.pos[0]) <= DEFAULTS.RADIUS ||
+            Math.abs(playerPos[1]-this.pos[1]) <= DEFAULTS.RADIUS));
 }
 
 module.exports = Orb;

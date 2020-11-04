@@ -48633,7 +48633,7 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 65:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 81:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -48645,6 +48645,7 @@ const DIM_Y = 500;
 function Game() {
     // Constructor must call this.menuStart()
     this.player = new Player();
+    this.orbs = [];
 }
 
 Game.prototype.menuStart = function () {
@@ -48658,13 +48659,13 @@ Game.prototype.levelStart = function (level) {
             orbColors = ["red", "green", "blue"];
             orbPositions = [[80, 80], [100, 100] , [200, 200]];
             this.orbs = this.addOrbs(orbPositions, orbColors, 3);
-            this.player.position([50,50]);
+            this.player.setPosition([50,50]);
             break;
         case 'level 2':
             orbColors = ["red", "green", "blue", "purple", "orange"];
             orbPositions = [[80, 80], [100, 100] , [200, 200], [300, 300], [400, 400]];
             this.orbs = this.addOrbs(orbPositions, orbColors, 5);
-            this.player.position([150,150]);
+            this.player.setPosition([150,150]);
             break;
     }
 }
@@ -48676,6 +48677,10 @@ Game.prototype.addOrbs = function (orbPositions, orbColors, numOrbs) {
     }
     return orbs;
 };
+
+Game.prototype.removeOrb = function() {
+    return this.orbs.pop();
+}
 
 Game.prototype.allObjects = function () {
     return [this.player].concat(this.orbs);
@@ -48695,9 +48700,20 @@ Game.prototype.draw = function (gameCtx) {
 }
 
 Game.prototype.moveObjects = function (gridCtx, gameCtx) {
-    this.allObjects().forEach(function (object) {
-        object.move(gridCtx, gameCtx);
+    let isRemoveOrb = false;
+    let that = this;
+    this.orbs.forEach(function (orb) {
+        isRemoveOrb = orb.move(gridCtx, gameCtx, that.player.getPosition());
+        if (isRemoveOrb) {
+            if (orb.color !== that.removeOrb().color) {
+                that.levelStart('level 1')
+            }
+        }
     })
+    if (this.orbs.length === 0) {
+        that.levelStart('level 2');
+    }
+    this.player.move(gridCtx, gameCtx);
 };
 
 module.exports = Game;
@@ -48820,7 +48836,7 @@ function Orb(pos, color) {
 
 Util.inherits(Orb, MovingObject);
 
-Orb.prototype.move = function (gridCtx, gameCtx) {
+Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
     //TODO: implement orb collision physics
     let newXPos = this.pos[0] + this.vel[0];
     let newYPos = this.pos[1] + this.vel[1];
@@ -48883,6 +48899,9 @@ Orb.prototype.move = function (gridCtx, gameCtx) {
         newYPos = this.pos[1] + this.vel[1];
         this.pos[1] = newYPos;
     }
+    return ((isCollisionX || isCollisionY) && 
+            (Math.abs(playerPos[0]-this.pos[0]) <= DEFAULTS.RADIUS ||
+            Math.abs(playerPos[1]-this.pos[1]) <= DEFAULTS.RADIUS));
 }
 
 module.exports = Orb;
@@ -48926,8 +48945,12 @@ function Player() {
 
 Util.inherits(Player, MovingObject);
 
-Player.prototype.position = function (pos) {
+Player.prototype.setPosition = function (pos) {
     this.pos = pos;
+}
+
+Player.prototype.getPosition = function () {
+    return this.pos;
 }
 
 Player.prototype.move = function (gridCtx, gameCtx) {

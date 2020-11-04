@@ -27,8 +27,12 @@ function Player() {
 
 Util.inherits(Player, MovingObject);
 
-Player.prototype.position = function (pos) {
+Player.prototype.setPosition = function (pos) {
     this.pos = pos;
+}
+
+Player.prototype.getPosition = function () {
+    return this.pos;
 }
 
 Player.prototype.move = function (gridCtx, gameCtx) {

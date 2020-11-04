@@ -7,6 +7,7 @@ const DIM_Y = 500;
 function Game() {
     // Constructor must call this.menuStart()
     this.player = new Player();
+    this.orbs = [];
 }
 
 Game.prototype.menuStart = function () {
@@ -20,13 +21,13 @@ Game.prototype.levelStart = function (level) {
             orbColors = ["red", "green", "blue"];
             orbPositions = [[80, 80], [100, 100] , [200, 200]];
             this.orbs = this.addOrbs(orbPositions, orbColors, 3);
-            this.player.position([50,50]);
+            this.player.setPosition([50,50]);
             break;
         case 'level 2':
             orbColors = ["red", "green", "blue", "purple", "orange"];
             orbPositions = [[80, 80], [100, 100] , [200, 200], [300, 300], [400, 400]];
             this.orbs = this.addOrbs(orbPositions, orbColors, 5);
-            this.player.position([150,150]);
+            this.player.setPosition([150,150]);
             break;
     }
 }
@@ -38,6 +39,10 @@ Game.prototype.addOrbs = function (orbPositions, orbColors, numOrbs) {
     }
     return orbs;
 };
+
+Game.prototype.removeOrb = function() {
+    return this.orbs.pop();
+}
 
 Game.prototype.allObjects = function () {
     return [this.player].concat(this.orbs);
@@ -57,9 +62,20 @@ Game.prototype.draw = function (gameCtx) {
 }
 
 Game.prototype.moveObjects = function (gridCtx, gameCtx) {
-    this.allObjects().forEach(function (object) {
-        object.move(gridCtx, gameCtx);
+    let isRemoveOrb = false;
+    let that = this;
+    this.orbs.forEach(function (orb) {
+        isRemoveOrb = orb.move(gridCtx, gameCtx, that.player.getPosition());
+        if (isRemoveOrb) {
+            if (orb.color !== that.removeOrb().color) {
+                that.levelStart('level 1')
+            }
+        }
     })
+    if (this.orbs.length === 0) {
+        that.levelStart('level 2');
+    }
+    this.player.move(gridCtx, gameCtx);
 };
 
 module.exports = Game;
