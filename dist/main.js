@@ -48633,39 +48633,56 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 119:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
 const Player = __webpack_require__(/*! ./player */ "./src/player.js");
+const Tone = __webpack_require__(/*! tone */ "./node_modules/tone/build/esm/index.js");
 
 const DIM_X = 700;
 const DIM_Y = 500;
 
 function Game() {
-    // Constructor must call this.menuStart()
     this.player = new Player();
     this.orbs = [];
+    this.currentLevel = 3;
+    this.isIntroSequence = false;
+    this.orbColors = [];
+    Tone.Transport.start(0);
 }
 
 Game.prototype.menuStart = function () {
     // set up Menu Screen
 }
 
+Game.prototype.isPlayingIntroSequence = function () {
+    return this.isIntroSequence;
+}
+
 Game.prototype.levelStart = function (level) {
-    let orbColors, orbPositions;
+    let orbPositions;
     switch (level) {
         case 'level 1':
-            orbColors = ["red", "green", "blue"];
+            this.orbColors = ["red", "green", "blue"];
             orbPositions = [[80, 80], [100, 100] , [200, 200]];
-            orbNotes = ["c4", "a4", "b4"]
-            this.orbs = this.addOrbs(orbPositions, orbColors, orbNotes, 3);
+            orbNotes = ["c4", "d4", "e4"]
+            this.orbs = this.addOrbs(orbPositions, this.orbColors, orbNotes, 3);
             this.player.setPosition([400,400]);
+            this.isIntroSequence = true;
             break;
         case 'level 2':
-            orbColors = ["red", "green", "blue", "purple", "orange"];
-            orbNotes = ["c4", "a4", "b4", "e4", "d4"];
+            this.orbColors = ["red", "green", "blue", "purple", "orange"];
+            orbNotes = ["c4", "d4", "e4", "a4", "g4"];
             orbPositions = [[80, 80], [100, 100] , [200, 200], [300, 300], [400, 400]];
-            this.orbs = this.addOrbs(orbPositions, orbColors, orbNotes, 5);
+            this.orbs = this.addOrbs(orbPositions, this.orbColors, orbNotes, 5);
+            this.player.setPosition([450,450]);
+            break;
+        case 'level 3':
+            this.orbColors = ["red", "blue", "orange", "green", "orange", "green"];
+            orbNotes = ["e4", "a4", "e5", "g4", "e5", "g4"];
+            orbPositions = [[80, 80], [100, 100] , [200, 200], [300, 300], [400, 400], [200, 250]];
+            this.orbs = this.addOrbs(orbPositions, this.orbColors, orbNotes, 6);
             this.player.setPosition([450,450]);
             break;
     }
@@ -48679,8 +48696,10 @@ Game.prototype.addOrbs = function (orbPositions, orbColors, orbNotes, numOrbs) {
     return orbs;
 };
 
-Game.prototype.removeOrb = function() {
-    return this.orbs.shift();
+Game.prototype.removeOrb = function(orbIndex) {
+    let removedOrb = this.orbs[orbIndex]
+    this.orbs = this.orbs.slice(0,orbIndex).concat(this.orbs.slice(orbIndex+1));
+    return removedOrb;
 }
 
 Game.prototype.allObjects = function () {
@@ -48700,19 +48719,37 @@ Game.prototype.draw = function (gameCtx) {
     });
 }
 
+Game.prototype.playIntroSequence = function (gameCtx, level) {
+       let isFinishedAnimating = false;
+       this.orbs.forEach(function (orb, idx) {
+           isFinishedAnimating = orb.animate((idx+1)*50);
+       });
+       this.orbs.forEach(function (orb) {
+           orb.draw(gameCtx);
+       });
+       this.isIntroSequence = !isFinishedAnimating;
+}
+
 Game.prototype.moveObjects = function (gridCtx, gameCtx) {
     let isOrbRemoved = false;
     let that = this;
-    this.orbs.forEach(function (orb) {
+    this.orbs.forEach(function (orb, idx) {
         isOrbRemoved = orb.move(gridCtx, gameCtx, that.player.getPosition());
         if (isOrbRemoved) {
-            if (orb.color !== that.removeOrb().color) {
-                that.levelStart('level 1')
+            let removedOrbColor = that.removeOrb(idx).color;
+            let targetOrbColor = that.orbColors.shift();
+            if (removedOrbColor !== targetOrbColor) {
+                let repeatLevel = 'level ' + that.currentLevel;
+                that.levelStart(repeatLevel)
+                that.isIntroSequence = true;
             }
         }
     })
     if (this.orbs.length === 0) {
-        that.levelStart('level 2');
+        this.currentLevel++;
+        let nextLevel = 'level ' + this.currentLevel;
+        this.levelStart(nextLevel);
+        this.isIntroSequence = true;
     }
     this.player.move(gridCtx, gameCtx);
 };
@@ -48740,18 +48777,24 @@ function GameView(game, gameCtx, gridCtx) {
 GameView.prototype.start = function () {
     window.setInterval(this.handleGame.bind(this), 20);
     this.bindKeyHandlers(this.game);
-    this.drawGrid();
+    // will eventually call this.game.menuStart() here
     // draw grid for level-n
+    this.drawGrid();
     // display color/sound orbs for level-n
-    this.game.levelStart('level 1');
+    //this.game.levelStart('level ' + this.game.currentLevel);
+    this.game.levelStart('level ' + this.game.currentLevel);
     // indicate order in which they must be collected
     // collect all, then proceed to next level
 };
 
 GameView.prototype.handleGame = function (e) {
-    // playLevelIntro()
-    this.game.moveObjects(this.gridCtx, this.gameCtx);
-    this.game.draw(this.gameCtx);
+    if (this.game.isPlayingIntroSequence()) {
+        this.game.playIntroSequence(this.gameCtx, 'level ' + this.game.currentLevel);
+    }
+    else {
+        this.game.moveObjects(this.gridCtx, this.gameCtx);
+        this.game.draw(this.gameCtx);
+    }
 };
 
 GameView.prototype.drawGrid = function () {
@@ -48814,7 +48857,6 @@ module.exports = MovingObject;
   \********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 134:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_object.js");
@@ -48836,8 +48878,7 @@ function Orb(pos, color, note) {
 
     MovingObject.call(this, properties);
 
-    // play note at random intervals between 5 and 20 frames
-    this.audioCountdown = 100 + Math.floor(Math.random()*100); 
+    this.audioCountdown = -1;
     this.visualCountdown = 0;
     this.note = note;
     this.orgColor = this.color;
@@ -48948,6 +48989,30 @@ Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
         newYPos = this.pos[1] + this.vel[1];
         this.pos[1] = newYPos;
     }
+}
+
+Orb.prototype.animate = function (count) {
+    let isFinishedAnimating = false;
+    if (this.audioCountdown === -1) {
+        this.audioCountdown = count
+        this.color = this.orgColor;
+    }
+    if (this.audioCountdown === 1) {
+        this.visualCountdown = 20;
+        this.synth.triggerAttackRelease(this.note, "16n");
+        this.color = this.flashColor;
+    }
+    if (this.visualCountdown === 1) {
+        this.color = this.orgColor;
+        isFinishedAnimating = true;
+    }
+    if (this.audioCountdown !== 0) {
+        this.audioCountdown--;
+    }
+    if (this.visualCountdown > 0) {
+        this.visualCountdown--;
+    }
+    return isFinishedAnimating;
 }
 
 module.exports = Orb;

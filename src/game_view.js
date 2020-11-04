@@ -9,18 +9,24 @@ function GameView(game, gameCtx, gridCtx) {
 GameView.prototype.start = function () {
     window.setInterval(this.handleGame.bind(this), 20);
     this.bindKeyHandlers(this.game);
-    this.drawGrid();
+    // will eventually call this.game.menuStart() here
     // draw grid for level-n
+    this.drawGrid();
     // display color/sound orbs for level-n
-    this.game.levelStart('level 1');
+    //this.game.levelStart('level ' + this.game.currentLevel);
+    this.game.levelStart('level ' + this.game.currentLevel);
     // indicate order in which they must be collected
     // collect all, then proceed to next level
 };
 
 GameView.prototype.handleGame = function (e) {
-    // playLevelIntro()
-    this.game.moveObjects(this.gridCtx, this.gameCtx);
-    this.game.draw(this.gameCtx);
+    if (this.game.isPlayingIntroSequence()) {
+        this.game.playIntroSequence(this.gameCtx, 'level ' + this.game.currentLevel);
+    }
+    else {
+        this.game.moveObjects(this.gridCtx, this.gameCtx);
+        this.game.draw(this.gameCtx);
+    }
 };
 
 GameView.prototype.drawGrid = function () {

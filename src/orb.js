@@ -17,8 +17,7 @@ function Orb(pos, color, note) {
 
     MovingObject.call(this, properties);
 
-    // play note at random intervals between 5 and 20 frames
-    this.audioCountdown = 100 + Math.floor(Math.random()*100); 
+    this.audioCountdown = -1;
     this.visualCountdown = 0;
     this.note = note;
     this.orgColor = this.color;
@@ -129,6 +128,30 @@ Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
         newYPos = this.pos[1] + this.vel[1];
         this.pos[1] = newYPos;
     }
+}
+
+Orb.prototype.animate = function (count) {
+    let isFinishedAnimating = false;
+    if (this.audioCountdown === -1) {
+        this.audioCountdown = count
+        this.color = this.orgColor;
+    }
+    if (this.audioCountdown === 1) {
+        this.visualCountdown = 20;
+        this.synth.triggerAttackRelease(this.note, "16n");
+        this.color = this.flashColor;
+    }
+    if (this.visualCountdown === 1) {
+        this.color = this.orgColor;
+        isFinishedAnimating = true;
+    }
+    if (this.audioCountdown !== 0) {
+        this.audioCountdown--;
+    }
+    if (this.visualCountdown > 0) {
+        this.visualCountdown--;
+    }
+    return isFinishedAnimating;
 }
 
 module.exports = Orb;
