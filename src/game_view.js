@@ -1,3 +1,5 @@
+const { context } = require("tone");
+
 function GameView(game, gameCtx, gridCtx) {
     this.game = game;
     this.gameCtx = gameCtx;
@@ -8,9 +10,15 @@ GameView.prototype.start = function () {
     window.setInterval(this.handleGame.bind(this), 20);
     this.bindKeyHandlers(this.game);
     this.drawGrid();
+    // draw grid for level-n
+    // display color/sound orbs for level-n
+    this.game.levelStart('level 1');
+    // indicate order in which they must be collected
+    // collect all, then proceed to next level
 };
 
 GameView.prototype.handleGame = function (e) {
+    // playLevelIntro()
     this.game.moveObjects(this.gridCtx, this.gameCtx);
     this.game.draw(this.gameCtx);
 };

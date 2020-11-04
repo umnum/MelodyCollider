@@ -3,17 +3,38 @@ const Player = require("./player");
 
 const DIM_X = 700;
 const DIM_Y = 500;
-const NUM_ORBS = 10;
 
 function Game() {
-    this.orbs = this.addOrbs();
-    this.player = new Player(this.randomPosition());
+    // Constructor must call this.menuStart()
+    this.player = new Player();
 }
 
-Game.prototype.addOrbs = function () {
+Game.prototype.menuStart = function () {
+    // set up Menu Screen
+}
+
+Game.prototype.levelStart = function (level) {
+    let orbColors, orbPositions;
+    switch (level) {
+        case 'level 1':
+            orbColors = ["red", "green", "blue"];
+            orbPositions = [[80, 80], [100, 100] , [200, 200]];
+            this.orbs = this.addOrbs(orbPositions, orbColors, 3);
+            this.player.position([50,50]);
+            break;
+        case 'level 2':
+            orbColors = ["red", "green", "blue", "purple", "orange"];
+            orbPositions = [[80, 80], [100, 100] , [200, 200], [300, 300], [400, 400]];
+            this.orbs = this.addOrbs(orbPositions, orbColors, 5);
+            this.player.position([150,150]);
+            break;
+    }
+}
+
+Game.prototype.addOrbs = function (orbPositions, orbColors, numOrbs) {
     let orbs = [];
-    for (let i = 0; i < NUM_ORBS; i++) {
-        orbs.push(new Orb(this.randomPosition()));
+    for (i = 0; i < numOrbs; i++) {
+        orbs.push(new Orb(orbPositions[i], orbColors[i]));
     }
     return orbs;
 };

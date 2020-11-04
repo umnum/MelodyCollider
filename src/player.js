@@ -4,6 +4,7 @@ const Util = require("./utils");
 const DEFAULT = {
     COLOR: "gray",
     RADIUS: 15,
+    POS: [15, 15],
     SPEED: 3
 };
 
@@ -14,9 +15,9 @@ const isPressed = {
     right: false,
 }
 
-function Player(pos) {
+function Player() {
     let properties = {
-        pos: pos,
+        pos: DEFAULT.POS,
         vel: [0, 0],
         radius: DEFAULT.RADIUS,
         color: DEFAULT.COLOR
@@ -25,6 +26,10 @@ function Player(pos) {
 }
 
 Util.inherits(Player, MovingObject);
+
+Player.prototype.position = function (pos) {
+    this.pos = pos;
+}
 
 Player.prototype.move = function (gridCtx, gameCtx) {
     let newXPos = this.pos[0] + this.vel[0];
