@@ -130,7 +130,7 @@ Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
     }
 }
 
-Orb.prototype.animate = function (count) {
+Orb.prototype.animateIntroSequence = function (count) {
     let isFinishedAnimating = false;
     if (this.audioCountdown === -1) {
         this.audioCountdown = count

@@ -9,11 +9,51 @@ function Game() {
     this.orbs = [];
     this.currentLevel = 1;
     this.isIntroSequence = false;
+    this.isMenu = false;
+    this.menuSelectState = {
+        gameStart: true,
+        gameAbout: false
+    },
     this.orbColors = [];
 }
 
 Game.prototype.menuStart = function () {
-    // set up Menu Screen
+    //this.levelStart('level ' + this.currentLevel);
+    this.isMenu = true;
+}
+
+Game.prototype.isPlayingMenuScreen = function () {
+    return this.isMenu;
+}
+
+Game.prototype.playMenuScreen = function (menuCtx) {
+    this.drawMenu(menuCtx);
+}
+
+Game.prototype.drawMenu = function (menuCtx) {
+    // draw menu screen
+            menuCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            menuCtx.font = "100px Arial";
+            menuCtx.fillText("Melody Collider", 10, 200);
+            menuCtx.font = "50px Arial";
+            menuCtx.fillText("press enter to start", 150, 300);
+}
+
+Game.prototype.menuAction = function (action, menuCtx) {
+    if (!this.isPlayingMenuScreen()) return null;
+    switch (action) {
+        case 'up':
+        case 'down':
+            this.menuSelectState.gameStart = !this.menuSelectState.gameStart;
+            this.menuSelectState.gameAbout = !this.menuSelectState.gameStart;
+            break;
+        case 'select':
+            this.isMenu = false;
+            // need to eventually compare with gameStart state
+            menuCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            this.levelStart('level 1');
+            break;
+    }
 }
 
 Game.prototype.isPlayingIntroSequence = function () {
@@ -140,7 +180,7 @@ Game.prototype.drawGrid = function (gridCtx, level) {
 Game.prototype.playIntroSequence = function (gameCtx, level) {
        let isFinishedAnimating = false;
        this.orbs.forEach(function (orb, idx) {
-           isFinishedAnimating = orb.animate((idx+1)*50);
+           isFinishedAnimating = orb.animateIntroSequence((idx+1)*50);
        });
        this.orbs.forEach(function (orb) {
            orb.draw(gameCtx);

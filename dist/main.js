@@ -48633,7 +48633,7 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 176:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 216:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -48647,11 +48647,51 @@ function Game() {
     this.orbs = [];
     this.currentLevel = 1;
     this.isIntroSequence = false;
+    this.isMenu = false;
+    this.menuSelectState = {
+        gameStart: true,
+        gameAbout: false
+    },
     this.orbColors = [];
 }
 
 Game.prototype.menuStart = function () {
-    // set up Menu Screen
+    //this.levelStart('level ' + this.currentLevel);
+    this.isMenu = true;
+}
+
+Game.prototype.isPlayingMenuScreen = function () {
+    return this.isMenu;
+}
+
+Game.prototype.playMenuScreen = function (menuCtx) {
+    this.drawMenu(menuCtx);
+}
+
+Game.prototype.drawMenu = function (menuCtx) {
+    // draw menu screen
+            menuCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            menuCtx.font = "100px Arial";
+            menuCtx.fillText("Melody Collider", 10, 200);
+            menuCtx.font = "50px Arial";
+            menuCtx.fillText("press enter to start", 150, 300);
+}
+
+Game.prototype.menuAction = function (action, menuCtx) {
+    if (!this.isPlayingMenuScreen()) return null;
+    switch (action) {
+        case 'up':
+        case 'down':
+            this.menuSelectState.gameStart = !this.menuSelectState.gameStart;
+            this.menuSelectState.gameAbout = !this.menuSelectState.gameStart;
+            break;
+        case 'select':
+            this.isMenu = false;
+            // need to eventually compare with gameStart state
+            menuCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            this.levelStart('level 1');
+            break;
+    }
 }
 
 Game.prototype.isPlayingIntroSequence = function () {
@@ -48778,7 +48818,7 @@ Game.prototype.drawGrid = function (gridCtx, level) {
 Game.prototype.playIntroSequence = function (gameCtx, level) {
        let isFinishedAnimating = false;
        this.orbs.forEach(function (orb, idx) {
-           isFinishedAnimating = orb.animate((idx+1)*50);
+           isFinishedAnimating = orb.animateIntroSequence((idx+1)*50);
        });
        this.orbs.forEach(function (orb) {
            orb.draw(gameCtx);
@@ -48820,51 +48860,47 @@ module.exports = Game;
   !*** ./src/game_view.js ***!
   \**************************/
 /*! unknown exports (runtime-defined) */
-/*! runtime requirements: module, __webpack_require__ */
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+/*! runtime requirements: module */
+/***/ ((module) => {
 
-const Tone = __webpack_require__(/*! tone */ "./node_modules/tone/build/esm/index.js");
-
-function GameView(game, gameCtx, gridCtx) {
+function GameView(game, gameCtx, gridCtx, menuCtx) {
     this.game = game;
     this.gameCtx = gameCtx;
     this.gridCtx = gridCtx;
+    this.menuCtx = menuCtx;
 }
 
 GameView.prototype.start = function () {
     window.setInterval(this.handleGame.bind(this), 20);
     this.bindKeyHandlers(this.game);
-    // will eventually call this.game.menuStart() here
-    this.game.levelStart('level ' + this.game.currentLevel);
+    this.game.menuStart();
 };
 
 GameView.prototype.handleGame = function (e) {
-    
-    this.game.drawGrid(this.gridCtx, 'level ' + this.game.currentLevel);
-    if (this.game.isPlayingIntroSequence()) {
-        this.game.playIntroSequence(this.gameCtx, 'level ' + this.game.currentLevel);
+    if (this.game.isPlayingMenuScreen()) {
+        this.game.playMenuScreen(this.menuCtx);
     }
     else {
-        this.game.moveObjects(this.gridCtx, this.gameCtx);
-        this.game.draw(this.gameCtx);
+        this.game.drawGrid(this.gridCtx, 'level ' + this.game.currentLevel);
+        if (this.game.isPlayingIntroSequence()) {
+            this.game.playIntroSequence(this.gameCtx, 'level ' + this.game.currentLevel);
+        }
+        else {
+            this.game.moveObjects(this.gridCtx, this.gameCtx);
+            this.game.draw(this.gameCtx);
+        }
     }
 };
 
-GameView.prototype.drawGrid = function () {
-    this.gridCtx.beginPath();
-    this.gridCtx.strokeStyle = "black";
-    this.gridCtx.fill();
-    this.gridCtx.rect(10, 10, 680, 480)
-    this.gridCtx.lineWidth = 20;
-    this.gridCtx.stroke();
-}
-
 GameView.prototype.bindKeyHandlers = function (game) {
+    let that = this;
     key('up', function () {game.player.direction('up')});
     key('down', function () {game.player.direction('down')});
     key('left', function () {game.player.direction('left')});
     key('right', function () {game.player.direction('right')});
-    //key('enter', function () {alert('you pressed enter!')});
+    key('up', function () {game.menuAction('up')});
+    key('down', function () {game.menuAction('down')});
+    key('enter', function () {game.menuAction('select', that.menuCtx)});
     //key('space', function () {alert('you pressed space!')});
 }
 
@@ -49044,7 +49080,7 @@ Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
     }
 }
 
-Orb.prototype.animate = function (count) {
+Orb.prototype.animateIntroSequence = function (count) {
     let isFinishedAnimating = false;
     if (this.audioCountdown === -1) {
         this.audioCountdown = count
@@ -49296,11 +49332,13 @@ const game = new Game();
 document.addEventListener("DOMContentLoaded", function () {
     const gameCanvas = document.getElementById("game-canvas");
     const gridCanvas = document.getElementById("grid-canvas");
+    const menuCanvas = document.getElementById("menu-canvas");
     const gameCtx = gameCanvas.getContext('2d');
     const gridCtx = gridCanvas.getContext('2d');
+    const menuCtx = menuCanvas.getContext('2d');
 
     // continuously draw moving Orbs in Game
-    const gameView = new GameView(game, gameCtx, gridCtx);
+    const gameView = new GameView(game, gameCtx, gridCtx, menuCtx);
     gameView.start();
 });
 

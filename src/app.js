@@ -7,11 +7,13 @@ const game = new Game();
 document.addEventListener("DOMContentLoaded", function () {
     const gameCanvas = document.getElementById("game-canvas");
     const gridCanvas = document.getElementById("grid-canvas");
+    const menuCanvas = document.getElementById("menu-canvas");
     const gameCtx = gameCanvas.getContext('2d');
     const gridCtx = gridCanvas.getContext('2d');
+    const menuCtx = menuCanvas.getContext('2d');
 
     // continuously draw moving Orbs in Game
-    const gameView = new GameView(game, gameCtx, gridCtx);
+    const gameView = new GameView(game, gameCtx, gridCtx, menuCtx);
     gameView.start();
 });
 
