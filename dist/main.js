@@ -48716,6 +48716,38 @@ Game.prototype.draw = function (gameCtx) {
     });
 }
 
+Game.prototype.drawGrid = function (gridCtx, level) {
+    switch (level) {
+        case 'level 1':
+            gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            gridCtx.beginPath();
+            gridCtx.strokeStyle = "black";
+            gridCtx.fill();
+            gridCtx.rect(10, 10, 680, 480)
+            gridCtx.lineWidth = 20;
+            gridCtx.stroke();
+            break;
+        case 'level 2':
+            gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            gridCtx.beginPath();
+            gridCtx.strokeStyle = "red";
+            gridCtx.fill();
+            gridCtx.rect(10, 10, 680, 480)
+            gridCtx.lineWidth = 20;
+            gridCtx.stroke();
+            break;
+        case 'level 3':
+            gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            gridCtx.beginPath();
+            gridCtx.strokeStyle = "blue";
+            gridCtx.fill();
+            gridCtx.rect(10, 10, 680, 480)
+            gridCtx.lineWidth = 20;
+            gridCtx.stroke();
+            break;
+    }
+}
+
 Game.prototype.playIntroSequence = function (gameCtx, level) {
        let isFinishedAnimating = false;
        this.orbs.forEach(function (orb, idx) {
@@ -48724,6 +48756,7 @@ Game.prototype.playIntroSequence = function (gameCtx, level) {
        this.orbs.forEach(function (orb) {
            orb.draw(gameCtx);
        });
+       this.player.draw(gameCtx);
        this.isIntroSequence = !isFinishedAnimating;
 }
 
@@ -48761,7 +48794,7 @@ module.exports = Game;
   \**************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 47:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 46:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Tone = __webpack_require__(/*! tone */ "./node_modules/tone/build/esm/index.js");
@@ -48776,13 +48809,12 @@ GameView.prototype.start = function () {
     window.setInterval(this.handleGame.bind(this), 20);
     this.bindKeyHandlers(this.game);
     // will eventually call this.game.menuStart() here
-    // draw grid for level-n
-    this.drawGrid();
     this.game.levelStart('level ' + this.game.currentLevel);
 };
 
 GameView.prototype.handleGame = function (e) {
     
+    this.game.drawGrid(this.gridCtx, 'level ' + this.game.currentLevel);
     if (this.game.isPlayingIntroSequence()) {
         this.game.playIntroSequence(this.gameCtx, 'level ' + this.game.currentLevel);
     }

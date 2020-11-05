@@ -79,6 +79,38 @@ Game.prototype.draw = function (gameCtx) {
     });
 }
 
+Game.prototype.drawGrid = function (gridCtx, level) {
+    switch (level) {
+        case 'level 1':
+            gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            gridCtx.beginPath();
+            gridCtx.strokeStyle = "black";
+            gridCtx.fill();
+            gridCtx.rect(10, 10, 680, 480)
+            gridCtx.lineWidth = 20;
+            gridCtx.stroke();
+            break;
+        case 'level 2':
+            gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            gridCtx.beginPath();
+            gridCtx.strokeStyle = "red";
+            gridCtx.fill();
+            gridCtx.rect(10, 10, 680, 480)
+            gridCtx.lineWidth = 20;
+            gridCtx.stroke();
+            break;
+        case 'level 3':
+            gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            gridCtx.beginPath();
+            gridCtx.strokeStyle = "blue";
+            gridCtx.fill();
+            gridCtx.rect(10, 10, 680, 480)
+            gridCtx.lineWidth = 20;
+            gridCtx.stroke();
+            break;
+    }
+}
+
 Game.prototype.playIntroSequence = function (gameCtx, level) {
        let isFinishedAnimating = false;
        this.orbs.forEach(function (orb, idx) {
@@ -87,6 +119,7 @@ Game.prototype.playIntroSequence = function (gameCtx, level) {
        this.orbs.forEach(function (orb) {
            orb.draw(gameCtx);
        });
+       this.player.draw(gameCtx);
        this.isIntroSequence = !isFinishedAnimating;
 }
 

@@ -10,13 +10,12 @@ GameView.prototype.start = function () {
     window.setInterval(this.handleGame.bind(this), 20);
     this.bindKeyHandlers(this.game);
     // will eventually call this.game.menuStart() here
-    // draw grid for level-n
-    this.drawGrid();
     this.game.levelStart('level ' + this.game.currentLevel);
 };
 
 GameView.prototype.handleGame = function (e) {
     
+    this.game.drawGrid(this.gridCtx, 'level ' + this.game.currentLevel);
     if (this.game.isPlayingIntroSequence()) {
         this.game.playIntroSequence(this.gameCtx, 'level ' + this.game.currentLevel);
     }
