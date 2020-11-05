@@ -48633,7 +48633,7 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 239:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 252:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -48680,8 +48680,20 @@ Game.prototype.drawMenu = function (menuCtx) {
             menuCtx.clearRect(0, 0, DIM_X, DIM_Y);
             menuCtx.font = "100px Arial";
             menuCtx.fillText("Melody Collider", 10, 200);
-            menuCtx.font = "50px Arial";
-            menuCtx.fillText("press enter to start", 150, 300);
+            if (this.menuSelectState.gameStart) {
+                menuCtx.font = "bold 50px Arial";
+            }
+            else {
+                menuCtx.font = "50px Arial";
+            }
+            menuCtx.fillText("Start Game", 215, 300);
+            if (this.menuSelectState.gameAbout) {
+                menuCtx.font = "bold 50px Arial";
+            }
+            else {
+                menuCtx.font = "50px Arial";
+            }
+            menuCtx.fillText("About Game", 200, 400);
 }
 
 Game.prototype.menuAction = function (action, menuCtx) {
@@ -48693,10 +48705,11 @@ Game.prototype.menuAction = function (action, menuCtx) {
             this.menuSelectState.gameAbout = !this.menuSelectState.gameStart;
             break;
         case 'select':
-            this.isMenu = false;
-            // need to eventually compare with gameStart state
             menuCtx.clearRect(0, 0, DIM_X, DIM_Y);
-            this.levelStart('level 1');
+            if (this.menuSelectState.gameStart) {
+                this.isMenu = false;
+                this.levelStart('level 1');
+            }
             break;
     }
 }

@@ -42,8 +42,20 @@ Game.prototype.drawMenu = function (menuCtx) {
             menuCtx.clearRect(0, 0, DIM_X, DIM_Y);
             menuCtx.font = "100px Arial";
             menuCtx.fillText("Melody Collider", 10, 200);
-            menuCtx.font = "50px Arial";
-            menuCtx.fillText("press enter to start", 150, 300);
+            if (this.menuSelectState.gameStart) {
+                menuCtx.font = "bold 50px Arial";
+            }
+            else {
+                menuCtx.font = "50px Arial";
+            }
+            menuCtx.fillText("Start Game", 215, 300);
+            if (this.menuSelectState.gameAbout) {
+                menuCtx.font = "bold 50px Arial";
+            }
+            else {
+                menuCtx.font = "50px Arial";
+            }
+            menuCtx.fillText("About Game", 200, 400);
 }
 
 Game.prototype.menuAction = function (action, menuCtx) {
@@ -55,10 +67,11 @@ Game.prototype.menuAction = function (action, menuCtx) {
             this.menuSelectState.gameAbout = !this.menuSelectState.gameStart;
             break;
         case 'select':
-            this.isMenu = false;
-            // need to eventually compare with gameStart state
             menuCtx.clearRect(0, 0, DIM_X, DIM_Y);
-            this.levelStart('level 1');
+            if (this.menuSelectState.gameStart) {
+                this.isMenu = false;
+                this.levelStart('level 1');
+            }
             break;
     }
 }
