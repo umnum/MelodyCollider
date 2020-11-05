@@ -1,4 +1,4 @@
-const { context } = require("tone");
+const Tone = require("tone");
 
 function GameView(game, gameCtx, gridCtx) {
     this.game = game;
@@ -12,14 +12,11 @@ GameView.prototype.start = function () {
     // will eventually call this.game.menuStart() here
     // draw grid for level-n
     this.drawGrid();
-    // display color/sound orbs for level-n
-    //this.game.levelStart('level ' + this.game.currentLevel);
     this.game.levelStart('level ' + this.game.currentLevel);
-    // indicate order in which they must be collected
-    // collect all, then proceed to next level
 };
 
 GameView.prototype.handleGame = function (e) {
+    
     if (this.game.isPlayingIntroSequence()) {
         this.game.playIntroSequence(this.gameCtx, 'level ' + this.game.currentLevel);
     }

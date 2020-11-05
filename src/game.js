@@ -1,6 +1,5 @@
 const Orb = require("./orb");
 const Player = require("./player");
-const Tone = require("tone");
 
 const DIM_X = 700;
 const DIM_Y = 500;
@@ -11,7 +10,6 @@ function Game() {
     this.currentLevel = 1;
     this.isIntroSequence = false;
     this.orbColors = [];
-    Tone.Transport.start(0);
 }
 
 Game.prototype.menuStart = function () {

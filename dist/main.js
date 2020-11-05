@@ -48633,12 +48633,10 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 119:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
 const Player = __webpack_require__(/*! ./player */ "./src/player.js");
-const Tone = __webpack_require__(/*! tone */ "./node_modules/tone/build/esm/index.js");
 
 const DIM_X = 700;
 const DIM_Y = 500;
@@ -48649,7 +48647,6 @@ function Game() {
     this.currentLevel = 1;
     this.isIntroSequence = false;
     this.orbColors = [];
-    Tone.Transport.start(0);
 }
 
 Game.prototype.menuStart = function () {
@@ -48764,9 +48761,10 @@ module.exports = Game;
   \**************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 47:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { context } = __webpack_require__(/*! tone */ "./node_modules/tone/build/esm/index.js");
+const Tone = __webpack_require__(/*! tone */ "./node_modules/tone/build/esm/index.js");
 
 function GameView(game, gameCtx, gridCtx) {
     this.game = game;
@@ -48780,14 +48778,11 @@ GameView.prototype.start = function () {
     // will eventually call this.game.menuStart() here
     // draw grid for level-n
     this.drawGrid();
-    // display color/sound orbs for level-n
-    //this.game.levelStart('level ' + this.game.currentLevel);
     this.game.levelStart('level ' + this.game.currentLevel);
-    // indicate order in which they must be collected
-    // collect all, then proceed to next level
 };
 
 GameView.prototype.handleGame = function (e) {
+    
     if (this.game.isPlayingIntroSequence()) {
         this.game.playIntroSequence(this.gameCtx, 'level ' + this.game.currentLevel);
     }
@@ -49236,6 +49231,7 @@ module.exports = Util;
 /*! runtime requirements: __webpack_require__ */
 const Game = __webpack_require__(/*! ./game */ "./src/game.js");
 const GameView = __webpack_require__(/*! ./game_view */ "./src/game_view.js");
+const Tone = __webpack_require__(/*! tone */ "./node_modules/tone/build/esm/index.js");
 
 const game = new Game();
 
@@ -49251,6 +49247,14 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener('keyup', function (event) {game.player.direction(event.key)});
+
+document.addEventListener('mousedown', async function () {
+    await Tone.start()
+})
+
+document.addEventListener('keydown', async function () {
+    await Tone.start()
+})
 })();
 
 /******/ })()

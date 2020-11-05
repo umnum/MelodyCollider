@@ -1,5 +1,6 @@
 const Game = require("./game");
 const GameView = require("./game_view");
+const Tone = require("tone");
 
 const game = new Game();
 
@@ -15,3 +16,11 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener('keyup', function (event) {game.player.direction(event.key)});
+
+document.addEventListener('mousedown', async function () {
+    await Tone.start()
+})
+
+document.addEventListener('keydown', async function () {
+    await Tone.start()
+})
