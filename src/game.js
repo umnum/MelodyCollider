@@ -205,6 +205,7 @@ Game.prototype.moveObjects = function (gridCtx, gameCtx) {
         if (isOrbRemoved) {
             let removedOrbColor = that.removeOrb(idx).orgColor;
             let targetOrbColor = that.orbColors.shift();
+            orb.synth.triggerAttackRelease(orb.note, "16n");
             if (removedOrbColor !== targetOrbColor) {
                 let repeatLevel = 'level ' + that.currentLevel;
                 that.levelStart(repeatLevel)

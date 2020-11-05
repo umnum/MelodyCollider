@@ -48633,7 +48633,7 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 224:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 225:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -48843,6 +48843,7 @@ Game.prototype.moveObjects = function (gridCtx, gameCtx) {
         if (isOrbRemoved) {
             let removedOrbColor = that.removeOrb(idx).orgColor;
             let targetOrbColor = that.orbColors.shift();
+            orb.synth.triggerAttackRelease(orb.note, "16n");
             if (removedOrbColor !== targetOrbColor) {
                 let repeatLevel = 'level ' + that.currentLevel;
                 that.levelStart(repeatLevel)
