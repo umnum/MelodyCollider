@@ -49,12 +49,13 @@ function Orb(pos, color, note) {
 Util.inherits(Orb, MovingObject);
 
 Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
-    if (this.audioCountdown === 0) {
-        this.audioCountdown = 100 + Math.floor(Math.random()*100);
-        this.synth.triggerAttackRelease(this.note, "16n");
-        this.visualCountdown = 20;
-        this.color = this.flashColor;
-    }
+    //// Randomly playing each orb might be too confusing
+    //if (this.audioCountdown === 0) {
+        //this.audioCountdown = 100 + Math.floor(Math.random()*100);
+        //this.synth.triggerAttackRelease(this.note, "16n");
+        //this.visualCountdown = 20;
+        //this.color = this.flashColor;
+    //}
     this.audioCountdown--;
     if (this.visualCountdown > 0) {
         this.visualCountdown--;

@@ -48633,7 +48633,6 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 216:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -48946,6 +48945,7 @@ module.exports = MovingObject;
   \********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 158:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_object.js");
@@ -48999,12 +48999,13 @@ function Orb(pos, color, note) {
 Util.inherits(Orb, MovingObject);
 
 Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
-    if (this.audioCountdown === 0) {
-        this.audioCountdown = 100 + Math.floor(Math.random()*100);
-        this.synth.triggerAttackRelease(this.note, "16n");
-        this.visualCountdown = 20;
-        this.color = this.flashColor;
-    }
+    //// Randomly playing each orb might be too confusing
+    //if (this.audioCountdown === 0) {
+        //this.audioCountdown = 100 + Math.floor(Math.random()*100);
+        //this.synth.triggerAttackRelease(this.note, "16n");
+        //this.visualCountdown = 20;
+        //this.color = this.flashColor;
+    //}
     this.audioCountdown--;
     if (this.visualCountdown > 0) {
         this.visualCountdown--;
