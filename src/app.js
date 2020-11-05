@@ -9,13 +9,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const gridCanvas = document.getElementById("grid-canvas");
     const menuCanvas = document.getElementById("menu-canvas");
     const headerCanvas = document.getElementById("header-canvas");
+    const pauseCanvas = document.getElementById("pause-canvas");
     const gameCtx = gameCanvas.getContext('2d');
     const gridCtx = gridCanvas.getContext('2d');
     const menuCtx = menuCanvas.getContext('2d');
     const headerCtx = headerCanvas.getContext('2d');
+    const pauseCtx = pauseCanvas.getContext('2d');
 
     // continuously draw moving Orbs in Game
-    const gameView = new GameView(game, gameCtx, gridCtx, menuCtx, headerCtx);
+    const gameView = new GameView(game, 
+                                  gameCtx, 
+                                  gridCtx, 
+                                  menuCtx, 
+                                  headerCtx, 
+                                  pauseCtx);
     gameView.start();
 });
 

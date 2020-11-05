@@ -12,6 +12,7 @@ function Game() {
     this.currentLevel = 1;
     this.isIntroSequence = false;
     this.isMenu = false;
+    this.isPaused = true;
     this.menuSelectState = {
         gameStart: true,
         gameAbout: false
@@ -26,6 +27,10 @@ Game.prototype.menuStart = function () {
 
 Game.prototype.isPlayingMenuScreen = function () {
     return this.isMenu;
+}
+
+Game.prototype.isGamePaused = function () {
+    return this.isPaused;
 }
 
 Game.prototype.playMenuScreen = function (menuCtx) {
@@ -54,6 +59,15 @@ Game.prototype.menuAction = function (action, menuCtx) {
             // need to eventually compare with gameStart state
             menuCtx.clearRect(0, 0, DIM_X, DIM_Y);
             this.levelStart('level 1');
+            break;
+    }
+}
+
+Game.prototype.pauseAction = function (action) {
+    if (this.isPlayingMenuScreen()) return null;
+    switch (action) {
+        case 'select':
+            this.isPaused = !this.isGamePaused();
             break;
     }
 }

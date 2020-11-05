@@ -48633,7 +48633,7 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 225:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 239:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -48650,6 +48650,7 @@ function Game() {
     this.currentLevel = 1;
     this.isIntroSequence = false;
     this.isMenu = false;
+    this.isPaused = true;
     this.menuSelectState = {
         gameStart: true,
         gameAbout: false
@@ -48664,6 +48665,10 @@ Game.prototype.menuStart = function () {
 
 Game.prototype.isPlayingMenuScreen = function () {
     return this.isMenu;
+}
+
+Game.prototype.isGamePaused = function () {
+    return this.isPaused;
 }
 
 Game.prototype.playMenuScreen = function (menuCtx) {
@@ -48692,6 +48697,15 @@ Game.prototype.menuAction = function (action, menuCtx) {
             // need to eventually compare with gameStart state
             menuCtx.clearRect(0, 0, DIM_X, DIM_Y);
             this.levelStart('level 1');
+            break;
+    }
+}
+
+Game.prototype.pauseAction = function (action) {
+    if (this.isPlayingMenuScreen()) return null;
+    switch (action) {
+        case 'select':
+            this.isPaused = !this.isGamePaused();
             break;
     }
 }
@@ -48872,12 +48886,13 @@ module.exports = Game;
 /*! runtime requirements: module */
 /***/ ((module) => {
 
-function GameView(game, gameCtx, gridCtx, menuCtx, headerCtx) {
+function GameView(game, gameCtx, gridCtx, menuCtx, headerCtx, pauseCtx) {
     this.game = game;
     this.gameCtx = gameCtx;
     this.gridCtx = gridCtx;
     this.menuCtx = menuCtx;
     this.headerCtx = headerCtx;
+    this.pauseCtx = pauseCtx;
 }
 
 GameView.prototype.start = function () {
@@ -48891,14 +48906,16 @@ GameView.prototype.handleGame = function (e) {
         this.game.playMenuScreen(this.menuCtx);
     }
     else {
-        this.game.drawGrid(this.gridCtx, 'level ' + this.game.currentLevel);
-        this.game.drawHeader(this.headerCtx);
-        if (this.game.isPlayingIntroSequence()) {
-            this.game.playIntroSequence(this.gameCtx, 'level ' + this.game.currentLevel);
-        }
-        else {
-            this.game.moveObjects(this.gridCtx, this.gameCtx);
-            this.game.draw(this.gameCtx);
+        if (!this.game.isGamePaused()) {
+            this.game.drawGrid(this.gridCtx, 'level ' + this.game.currentLevel);
+            this.game.drawHeader(this.headerCtx);
+            if (this.game.isPlayingIntroSequence()) {
+                this.game.playIntroSequence(this.gameCtx, 'level ' + this.game.currentLevel);
+            }
+            else {
+                this.game.moveObjects(this.gridCtx, this.gameCtx);
+                this.game.draw(this.gameCtx);
+            }
         }
     }
 };
@@ -48912,6 +48929,10 @@ GameView.prototype.bindKeyHandlers = function (game) {
     key('up', function () {game.menuAction('up')});
     key('down', function () {game.menuAction('down')});
     key('enter', function () {game.menuAction('select', that.menuCtx)});
+    key('up', function () {game.pauseAction('up')});
+    key('down', function () {game.pauseAction('down')});
+    key('enter', function () {game.pauseAction('select', that.pauseCtx)});
+    key('space', function () {game.pauseAction('select', that.pauseCtx)});
     //key('space', function () {alert('you pressed space!')});
 }
 
@@ -49346,13 +49367,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const gridCanvas = document.getElementById("grid-canvas");
     const menuCanvas = document.getElementById("menu-canvas");
     const headerCanvas = document.getElementById("header-canvas");
+    const pauseCanvas = document.getElementById("pause-canvas");
     const gameCtx = gameCanvas.getContext('2d');
     const gridCtx = gridCanvas.getContext('2d');
     const menuCtx = menuCanvas.getContext('2d');
     const headerCtx = headerCanvas.getContext('2d');
+    const pauseCtx = pauseCanvas.getContext('2d');
 
     // continuously draw moving Orbs in Game
-    const gameView = new GameView(game, gameCtx, gridCtx, menuCtx, headerCtx);
+    const gameView = new GameView(game, 
+                                  gameCtx, 
+                                  gridCtx, 
+                                  menuCtx, 
+                                  headerCtx, 
+                                  pauseCtx);
     gameView.start();
 });
 
