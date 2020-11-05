@@ -48633,6 +48633,7 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 224:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -48640,6 +48641,8 @@ const Player = __webpack_require__(/*! ./player */ "./src/player.js");
 
 const DIM_X = 700;
 const DIM_Y = 500;
+const HEADER_DIM_X = 700;
+const HEADER_DIM_Y = 100;
 
 function Game() {
     this.player = new Player();
@@ -48756,6 +48759,12 @@ Game.prototype.draw = function (gameCtx) {
     });
 }
 
+Game.prototype.drawHeader = function (headerCtx) {
+    headerCtx.clearRect(0, 0, HEADER_DIM_X, HEADER_DIM_Y);
+    headerCtx.font = "50px Arial";
+    headerCtx.fillText("Level " + this.currentLevel, 500, 65);
+};
+
 Game.prototype.drawGrid = function (gridCtx, level) {
     switch (level) {
         case 'level 1':
@@ -48862,11 +48871,12 @@ module.exports = Game;
 /*! runtime requirements: module */
 /***/ ((module) => {
 
-function GameView(game, gameCtx, gridCtx, menuCtx) {
+function GameView(game, gameCtx, gridCtx, menuCtx, headerCtx) {
     this.game = game;
     this.gameCtx = gameCtx;
     this.gridCtx = gridCtx;
     this.menuCtx = menuCtx;
+    this.headerCtx = headerCtx;
 }
 
 GameView.prototype.start = function () {
@@ -48881,6 +48891,7 @@ GameView.prototype.handleGame = function (e) {
     }
     else {
         this.game.drawGrid(this.gridCtx, 'level ' + this.game.currentLevel);
+        this.game.drawHeader(this.headerCtx);
         if (this.game.isPlayingIntroSequence()) {
             this.game.playIntroSequence(this.gameCtx, 'level ' + this.game.currentLevel);
         }
@@ -48945,7 +48956,6 @@ module.exports = MovingObject;
   \********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 158:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_object.js");
@@ -49334,12 +49344,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const gameCanvas = document.getElementById("game-canvas");
     const gridCanvas = document.getElementById("grid-canvas");
     const menuCanvas = document.getElementById("menu-canvas");
+    const headerCanvas = document.getElementById("header-canvas");
     const gameCtx = gameCanvas.getContext('2d');
     const gridCtx = gridCanvas.getContext('2d');
     const menuCtx = menuCanvas.getContext('2d');
+    const headerCtx = headerCanvas.getContext('2d');
 
     // continuously draw moving Orbs in Game
-    const gameView = new GameView(game, gameCtx, gridCtx, menuCtx);
+    const gameView = new GameView(game, gameCtx, gridCtx, menuCtx, headerCtx);
     gameView.start();
 });
 

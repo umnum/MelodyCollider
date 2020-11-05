@@ -8,3 +8,7 @@ canvas {
     top: 100px;
     left: 350px;
 }
+
+#header-canvas {
+    top: 0px;
+}

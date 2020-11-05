@@ -1,8 +1,9 @@
-function GameView(game, gameCtx, gridCtx, menuCtx) {
+function GameView(game, gameCtx, gridCtx, menuCtx, headerCtx) {
     this.game = game;
     this.gameCtx = gameCtx;
     this.gridCtx = gridCtx;
     this.menuCtx = menuCtx;
+    this.headerCtx = headerCtx;
 }
 
 GameView.prototype.start = function () {
@@ -17,6 +18,7 @@ GameView.prototype.handleGame = function (e) {
     }
     else {
         this.game.drawGrid(this.gridCtx, 'level ' + this.game.currentLevel);
+        this.game.drawHeader(this.headerCtx);
         if (this.game.isPlayingIntroSequence()) {
             this.game.playIntroSequence(this.gameCtx, 'level ' + this.game.currentLevel);
         }

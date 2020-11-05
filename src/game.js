@@ -3,6 +3,8 @@ const Player = require("./player");
 
 const DIM_X = 700;
 const DIM_Y = 500;
+const HEADER_DIM_X = 700;
+const HEADER_DIM_Y = 100;
 
 function Game() {
     this.player = new Player();
@@ -118,6 +120,12 @@ Game.prototype.draw = function (gameCtx) {
         object.draw(gameCtx);
     });
 }
+
+Game.prototype.drawHeader = function (headerCtx) {
+    headerCtx.clearRect(0, 0, HEADER_DIM_X, HEADER_DIM_Y);
+    headerCtx.font = "50px Arial";
+    headerCtx.fillText("Level " + this.currentLevel, 500, 65);
+};
 
 Game.prototype.drawGrid = function (gridCtx, level) {
     switch (level) {
