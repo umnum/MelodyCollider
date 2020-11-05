@@ -17,6 +17,9 @@ function Game() {
         gameStart: true,
         gameAbout: false
     },
+    this.pauseSelectState = {
+        gameContinue: true
+    }
     this.orbColors = [];
 }
 
@@ -76,12 +79,52 @@ Game.prototype.menuAction = function (action, menuCtx) {
     }
 }
 
-Game.prototype.pauseAction = function (action) {
+Game.prototype.pauseAction = function (action, pauseCtx, gameCtx, headerCtx, gridCtx) {
     if (this.isPlayingMenuScreen()) return null;
     switch (action) {
-        case 'select':
-            this.isPaused = !this.isGamePaused();
+        case 'left':
+        case 'right':
+            this.pauseSelectState.gameContinue = !this.pauseSelectState.gameContinue;
             break;
+        case 'select':
+            pauseCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            gameCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            headerCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            this.isPaused = !this.isGamePaused();
+            if (!this.pauseSelectState.gameContinue) {
+                this.isPaused = !this.isGamePaused();
+                this.isMenu = true;
+                this.pauseSelectState.gameContinue = true;
+                this.menuSelectState.gameStart = true;
+                this.menuSelectState.gameAbout = false;
+                pauseCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            }
+            break;
+    }
+}
+
+Game.prototype.playPauseScreen = function (pauseCtx)  {
+    this.drawPauseScreen(pauseCtx);
+}
+
+Game.prototype.drawPauseScreen = function (pauseCtx) {
+    pauseCtx.clearRect(0, 0, DIM_X, DIM_Y);
+    pauseCtx.font = "50px Arial";
+    pauseCtx.fillText("Paused", 260, 150);
+    pauseCtx.font = "50px Arial";
+    pauseCtx.fillText("Continue?", 240, 250);
+    if (this.pauseSelectState.gameContinue) {
+        pauseCtx.font = "bold 50px Arial";
+        pauseCtx.fillText("Yes", 255, 320);
+        pauseCtx.font = "50px Arial";
+        pauseCtx.fillText("No", 390, 320);
+    }
+    else {
+        pauseCtx.font = "50px Arial";
+        pauseCtx.fillText("Yes", 255, 320);
+        pauseCtx.font = "bold 50px Arial";
+        pauseCtx.fillText("No", 390, 320);
     }
 }
 

@@ -18,7 +18,10 @@ GameView.prototype.handleGame = function (e) {
         this.game.playMenuScreen(this.menuCtx);
     }
     else {
-        if (!this.game.isGamePaused()) {
+        if (this.game.isGamePaused()) {
+            this.game.playPauseScreen(this.pauseCtx);
+        }
+        else {
             this.game.drawGrid(this.gridCtx, 'level ' + this.game.currentLevel);
             this.game.drawHeader(this.headerCtx);
             if (this.game.isPlayingIntroSequence()) {
@@ -41,10 +44,10 @@ GameView.prototype.bindKeyHandlers = function (game) {
     key('up', function () {game.menuAction('up')});
     key('down', function () {game.menuAction('down')});
     key('enter', function () {game.menuAction('select', that.menuCtx)});
-    key('up', function () {game.pauseAction('up')});
-    key('down', function () {game.pauseAction('down')});
-    key('enter', function () {game.pauseAction('select', that.pauseCtx)});
-    key('space', function () {game.pauseAction('select', that.pauseCtx)});
+    key('left', function () {game.pauseAction('left')});
+    key('right', function () {game.pauseAction('right')});
+    key('enter', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx)});
+    key('space', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx)});
     //key('space', function () {alert('you pressed space!')});
 }
 

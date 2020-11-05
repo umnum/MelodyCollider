@@ -48633,7 +48633,7 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 252:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 295:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -48655,6 +48655,9 @@ function Game() {
         gameStart: true,
         gameAbout: false
     },
+    this.pauseSelectState = {
+        gameContinue: true
+    }
     this.orbColors = [];
 }
 
@@ -48714,12 +48717,52 @@ Game.prototype.menuAction = function (action, menuCtx) {
     }
 }
 
-Game.prototype.pauseAction = function (action) {
+Game.prototype.pauseAction = function (action, pauseCtx, gameCtx, headerCtx, gridCtx) {
     if (this.isPlayingMenuScreen()) return null;
     switch (action) {
-        case 'select':
-            this.isPaused = !this.isGamePaused();
+        case 'left':
+        case 'right':
+            this.pauseSelectState.gameContinue = !this.pauseSelectState.gameContinue;
             break;
+        case 'select':
+            pauseCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            gameCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            headerCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            this.isPaused = !this.isGamePaused();
+            if (!this.pauseSelectState.gameContinue) {
+                this.isPaused = !this.isGamePaused();
+                this.isMenu = true;
+                this.pauseSelectState.gameContinue = true;
+                this.menuSelectState.gameStart = true;
+                this.menuSelectState.gameAbout = false;
+                pauseCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            }
+            break;
+    }
+}
+
+Game.prototype.playPauseScreen = function (pauseCtx)  {
+    this.drawPauseScreen(pauseCtx);
+}
+
+Game.prototype.drawPauseScreen = function (pauseCtx) {
+    pauseCtx.clearRect(0, 0, DIM_X, DIM_Y);
+    pauseCtx.font = "50px Arial";
+    pauseCtx.fillText("Paused", 260, 150);
+    pauseCtx.font = "50px Arial";
+    pauseCtx.fillText("Continue?", 240, 250);
+    if (this.pauseSelectState.gameContinue) {
+        pauseCtx.font = "bold 50px Arial";
+        pauseCtx.fillText("Yes", 255, 320);
+        pauseCtx.font = "50px Arial";
+        pauseCtx.fillText("No", 390, 320);
+    }
+    else {
+        pauseCtx.font = "50px Arial";
+        pauseCtx.fillText("Yes", 255, 320);
+        pauseCtx.font = "bold 50px Arial";
+        pauseCtx.fillText("No", 390, 320);
     }
 }
 
@@ -48919,7 +48962,10 @@ GameView.prototype.handleGame = function (e) {
         this.game.playMenuScreen(this.menuCtx);
     }
     else {
-        if (!this.game.isGamePaused()) {
+        if (this.game.isGamePaused()) {
+            this.game.playPauseScreen(this.pauseCtx);
+        }
+        else {
             this.game.drawGrid(this.gridCtx, 'level ' + this.game.currentLevel);
             this.game.drawHeader(this.headerCtx);
             if (this.game.isPlayingIntroSequence()) {
@@ -48942,10 +48988,10 @@ GameView.prototype.bindKeyHandlers = function (game) {
     key('up', function () {game.menuAction('up')});
     key('down', function () {game.menuAction('down')});
     key('enter', function () {game.menuAction('select', that.menuCtx)});
-    key('up', function () {game.pauseAction('up')});
-    key('down', function () {game.pauseAction('down')});
-    key('enter', function () {game.pauseAction('select', that.pauseCtx)});
-    key('space', function () {game.pauseAction('select', that.pauseCtx)});
+    key('left', function () {game.pauseAction('left')});
+    key('right', function () {game.pauseAction('right')});
+    key('enter', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx)});
+    key('space', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx)});
     //key('space', function () {alert('you pressed space!')});
 }
 
