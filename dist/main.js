@@ -48633,7 +48633,7 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 295:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 299:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -48701,6 +48701,7 @@ Game.prototype.drawMenu = function (menuCtx) {
 
 Game.prototype.menuAction = function (action, menuCtx) {
     if (!this.isPlayingMenuScreen()) return null;
+    debugger
     switch (action) {
         case 'up':
         case 'down':
@@ -48722,7 +48723,9 @@ Game.prototype.pauseAction = function (action, pauseCtx, gameCtx, headerCtx, gri
     switch (action) {
         case 'left':
         case 'right':
-            this.pauseSelectState.gameContinue = !this.pauseSelectState.gameContinue;
+            if (this.isGamePaused()) {
+                this.pauseSelectState.gameContinue = !this.pauseSelectState.gameContinue;
+            }
             break;
         case 'select':
             pauseCtx.clearRect(0, 0, DIM_X, DIM_Y);
@@ -48731,11 +48734,12 @@ Game.prototype.pauseAction = function (action, pauseCtx, gameCtx, headerCtx, gri
             gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
             this.isPaused = !this.isGamePaused();
             if (!this.pauseSelectState.gameContinue) {
-                this.isPaused = !this.isGamePaused();
+                this.isPaused = true;
                 this.isMenu = true;
                 this.pauseSelectState.gameContinue = true;
                 this.menuSelectState.gameStart = true;
                 this.menuSelectState.gameAbout = false;
+                this.currentLevel = 1;
                 pauseCtx.clearRect(0, 0, DIM_X, DIM_Y);
             }
             break;
