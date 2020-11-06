@@ -10,11 +10,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const menuCanvas = document.getElementById("menu-canvas");
     const headerCanvas = document.getElementById("header-canvas");
     const pauseCanvas = document.getElementById("pause-canvas");
+    const audioCanvas = document.getElementById("audio-canvas");
     const gameCtx = gameCanvas.getContext('2d');
     const gridCtx = gridCanvas.getContext('2d');
     const menuCtx = menuCanvas.getContext('2d');
     const headerCtx = headerCanvas.getContext('2d');
     const pauseCtx = pauseCanvas.getContext('2d');
+    const audioCtx = audioCanvas.getContext('2d');
+
+    audioCanvas.addEventListener("click", function (event) {game.toggleAudio()})
 
     // continuously draw moving Orbs in Game
     const gameView = new GameView(game, 
@@ -22,7 +26,8 @@ document.addEventListener("DOMContentLoaded", function () {
                                   gridCtx, 
                                   menuCtx, 
                                   headerCtx, 
-                                  pauseCtx);
+                                  pauseCtx,
+                                  audioCtx);
     gameView.start();
 });
 

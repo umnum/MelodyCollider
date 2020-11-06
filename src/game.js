@@ -1,5 +1,6 @@
 const Orb = require("./orb");
 const Player = require("./player");
+const Tone = require("tone");
 
 const DIM_X = 700;
 const DIM_Y = 500;
@@ -20,6 +21,9 @@ function Game() {
     this.pauseSelectState = {
         gameContinue: true
     }
+    this.audioSelectState = {
+        audioOn: true
+    }
     this.orbColors = [];
 }
 
@@ -38,6 +42,71 @@ Game.prototype.isGamePaused = function () {
 
 Game.prototype.playMenuScreen = function (menuCtx) {
     this.drawMenu(menuCtx);
+}
+
+Game.prototype.toggleAudio = function () {
+    Tone.Master.mute = this.audioSelectState.audioOn;
+    this.audioSelectState.audioOn = !this.audioSelectState.audioOn;
+}
+
+Game.prototype.drawAudioIcon = function (audioCtx) {
+    audioCtx.clearRect(0, 0, DIM_X, DIM_Y);
+    if (this.audioSelectState.audioOn) {
+        audioCtx.fillStyle = "black";
+        audioCtx.beginPath();
+        audioCtx.strokeStyle = "black";
+        audioCtx.rect(10, 40, 20, 25)
+        audioCtx.fill();
+        audioCtx.beginPath();
+        audioCtx.moveTo(10, 53);
+        audioCtx.lineTo(53, 85);
+        audioCtx.lineTo(53, 20);
+        audioCtx.fill();
+        audioCtx.beginPath();
+        audioCtx.lineWidth = 5;
+        audioCtx.ellipse(55, 50, 10, 12, 0, -.7, .7);
+        audioCtx.stroke();
+        audioCtx.beginPath();
+        audioCtx.ellipse(70, 50, 10, 15, 0, -1, 1);
+        audioCtx.stroke();
+        audioCtx.beginPath();
+        audioCtx.ellipse(85, 50, 10, 25, 0, -1.3, 1.3);
+        audioCtx.stroke();
+    }
+    else {
+        audioCtx.fillStyle = "gray";
+        audioCtx.beginPath();
+        audioCtx.strokeStyle = "gray";
+        audioCtx.rect(10, 40, 20, 25)
+        audioCtx.fill();
+        audioCtx.beginPath();
+        audioCtx.moveTo(10, 53);
+        audioCtx.lineTo(53, 85);
+        audioCtx.lineTo(53, 20);
+        audioCtx.fill();
+        audioCtx.beginPath();
+        audioCtx.lineWidth = 5;
+        audioCtx.ellipse(55, 50, 10, 12, 0, -.7, .7);
+        audioCtx.stroke();
+        audioCtx.beginPath();
+        audioCtx.ellipse(70, 50, 10, 15, 0, -1, 1);
+        audioCtx.stroke();
+        audioCtx.beginPath();
+        audioCtx.ellipse(85, 50, 10, 25, 0, -1.3, 1.3);
+        audioCtx.stroke();
+        audioCtx.beginPath();
+        audioCtx.strokeStyle = "white";
+        audioCtx.lineWidth = 15;
+        audioCtx.moveTo(0, 100);
+        audioCtx.lineTo(100, 0);
+        audioCtx.stroke();
+        audioCtx.beginPath();
+        audioCtx.strokeStyle = "gray";
+        audioCtx.lineWidth = 10;
+        audioCtx.moveTo(15, 85);
+        audioCtx.lineTo(80, 20);
+        audioCtx.stroke();
+    }
 }
 
 Game.prototype.drawMenu = function (menuCtx) {
@@ -63,7 +132,7 @@ Game.prototype.drawMenu = function (menuCtx) {
 
 Game.prototype.menuAction = function (action, menuCtx) {
     if (!this.isPlayingMenuScreen()) return null;
-    debugger
+    
     switch (action) {
         case 'up':
         case 'down':

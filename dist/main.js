@@ -48633,11 +48633,11 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 299:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
 const Player = __webpack_require__(/*! ./player */ "./src/player.js");
+const Tone = __webpack_require__(/*! tone */ "./node_modules/tone/build/esm/index.js");
 
 const DIM_X = 700;
 const DIM_Y = 500;
@@ -48658,6 +48658,9 @@ function Game() {
     this.pauseSelectState = {
         gameContinue: true
     }
+    this.audioSelectState = {
+        audioOn: true
+    }
     this.orbColors = [];
 }
 
@@ -48676,6 +48679,71 @@ Game.prototype.isGamePaused = function () {
 
 Game.prototype.playMenuScreen = function (menuCtx) {
     this.drawMenu(menuCtx);
+}
+
+Game.prototype.toggleAudio = function () {
+    Tone.Master.mute = this.audioSelectState.audioOn;
+    this.audioSelectState.audioOn = !this.audioSelectState.audioOn;
+}
+
+Game.prototype.drawAudioIcon = function (audioCtx) {
+    audioCtx.clearRect(0, 0, DIM_X, DIM_Y);
+    if (this.audioSelectState.audioOn) {
+        audioCtx.fillStyle = "black";
+        audioCtx.beginPath();
+        audioCtx.strokeStyle = "black";
+        audioCtx.rect(10, 40, 20, 25)
+        audioCtx.fill();
+        audioCtx.beginPath();
+        audioCtx.moveTo(10, 53);
+        audioCtx.lineTo(53, 85);
+        audioCtx.lineTo(53, 20);
+        audioCtx.fill();
+        audioCtx.beginPath();
+        audioCtx.lineWidth = 5;
+        audioCtx.ellipse(55, 50, 10, 12, 0, -.7, .7);
+        audioCtx.stroke();
+        audioCtx.beginPath();
+        audioCtx.ellipse(70, 50, 10, 15, 0, -1, 1);
+        audioCtx.stroke();
+        audioCtx.beginPath();
+        audioCtx.ellipse(85, 50, 10, 25, 0, -1.3, 1.3);
+        audioCtx.stroke();
+    }
+    else {
+        audioCtx.fillStyle = "gray";
+        audioCtx.beginPath();
+        audioCtx.strokeStyle = "gray";
+        audioCtx.rect(10, 40, 20, 25)
+        audioCtx.fill();
+        audioCtx.beginPath();
+        audioCtx.moveTo(10, 53);
+        audioCtx.lineTo(53, 85);
+        audioCtx.lineTo(53, 20);
+        audioCtx.fill();
+        audioCtx.beginPath();
+        audioCtx.lineWidth = 5;
+        audioCtx.ellipse(55, 50, 10, 12, 0, -.7, .7);
+        audioCtx.stroke();
+        audioCtx.beginPath();
+        audioCtx.ellipse(70, 50, 10, 15, 0, -1, 1);
+        audioCtx.stroke();
+        audioCtx.beginPath();
+        audioCtx.ellipse(85, 50, 10, 25, 0, -1.3, 1.3);
+        audioCtx.stroke();
+        audioCtx.beginPath();
+        audioCtx.strokeStyle = "white";
+        audioCtx.lineWidth = 15;
+        audioCtx.moveTo(0, 100);
+        audioCtx.lineTo(100, 0);
+        audioCtx.stroke();
+        audioCtx.beginPath();
+        audioCtx.strokeStyle = "gray";
+        audioCtx.lineWidth = 10;
+        audioCtx.moveTo(15, 85);
+        audioCtx.lineTo(80, 20);
+        audioCtx.stroke();
+    }
 }
 
 Game.prototype.drawMenu = function (menuCtx) {
@@ -48701,7 +48769,7 @@ Game.prototype.drawMenu = function (menuCtx) {
 
 Game.prototype.menuAction = function (action, menuCtx) {
     if (!this.isPlayingMenuScreen()) return null;
-    debugger
+    
     switch (action) {
         case 'up':
         case 'down':
@@ -48944,15 +49012,17 @@ module.exports = Game;
   \**************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
+/*! CommonJS bailout: module.exports is used directly at 57:0-14 */
 /***/ ((module) => {
 
-function GameView(game, gameCtx, gridCtx, menuCtx, headerCtx, pauseCtx) {
+function GameView(game, gameCtx, gridCtx, menuCtx, headerCtx, pauseCtx, audioCtx) {
     this.game = game;
     this.gameCtx = gameCtx;
     this.gridCtx = gridCtx;
     this.menuCtx = menuCtx;
     this.headerCtx = headerCtx;
     this.pauseCtx = pauseCtx;
+    this.audioCtx = audioCtx;
 }
 
 GameView.prototype.start = function () {
@@ -48972,6 +49042,7 @@ GameView.prototype.handleGame = function (e) {
         else {
             this.game.drawGrid(this.gridCtx, 'level ' + this.game.currentLevel);
             this.game.drawHeader(this.headerCtx);
+            this.game.drawAudioIcon(this.audioCtx);
             if (this.game.isPlayingIntroSequence()) {
                 this.game.playIntroSequence(this.gameCtx, 'level ' + this.game.currentLevel);
             }
@@ -48992,11 +49063,12 @@ GameView.prototype.bindKeyHandlers = function (game) {
     key('up', function () {game.menuAction('up')});
     key('down', function () {game.menuAction('down')});
     key('enter', function () {game.menuAction('select', that.menuCtx)});
+    key('space', function () {game.menuAction('select', that.menuCtx)});
     key('left', function () {game.pauseAction('left')});
     key('right', function () {game.pauseAction('right')});
     key('enter', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx)});
     key('space', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx)});
-    //key('space', function () {alert('you pressed space!')});
+    key('m', function () {game.toggleAudio()});
 }
 
 module.exports = GameView;
@@ -49431,11 +49503,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const menuCanvas = document.getElementById("menu-canvas");
     const headerCanvas = document.getElementById("header-canvas");
     const pauseCanvas = document.getElementById("pause-canvas");
+    const audioCanvas = document.getElementById("audio-canvas");
     const gameCtx = gameCanvas.getContext('2d');
     const gridCtx = gridCanvas.getContext('2d');
     const menuCtx = menuCanvas.getContext('2d');
     const headerCtx = headerCanvas.getContext('2d');
     const pauseCtx = pauseCanvas.getContext('2d');
+    const audioCtx = audioCanvas.getContext('2d');
+
+    audioCanvas.addEventListener("click", function (event) {game.toggleAudio()})
 
     // continuously draw moving Orbs in Game
     const gameView = new GameView(game, 
@@ -49443,7 +49519,8 @@ document.addEventListener("DOMContentLoaded", function () {
                                   gridCtx, 
                                   menuCtx, 
                                   headerCtx, 
-                                  pauseCtx);
+                                  pauseCtx,
+                                  audioCtx);
     gameView.start();
 });
 

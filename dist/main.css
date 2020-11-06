@@ -12,3 +12,12 @@ canvas {
 #header-canvas {
     top: 0px;
 }
+
+#audio-canvas {
+    top: 0px;
+    left: 650px;
+}
+
+#audio-canvas:hover {
+    cursor: pointer;
+}
