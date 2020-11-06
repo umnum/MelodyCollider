@@ -13,6 +13,7 @@ function Game() {
     this.currentLevel = 1;
     this.isIntroSequence = false;
     this.isMenu = false;
+    this.isAbout = false;
     this.isPaused = true;
     this.menuSelectState = {
         gameStart: true,
@@ -112,22 +113,56 @@ Game.prototype.drawAudioIcon = function (audioCtx) {
 Game.prototype.drawMenu = function (menuCtx) {
     // draw menu screen
             menuCtx.clearRect(0, 0, DIM_X, DIM_Y);
-            menuCtx.font = "100px Arial";
-            menuCtx.fillText("Melody Collider", 10, 200);
-            if (this.menuSelectState.gameStart) {
-                menuCtx.font = "bold 50px Arial";
+            if (this.isAbout) {
+                menuCtx.font = "bold 30px Arial";
+                menuCtx.fillText("Description", 0, 30);
+                menuCtx.font = "20px Arial";
+                menuCtx.fillText("Yada yada yada yada yada yada yada yada. " +
+                                 "Yada yada yada yada yada yada.", 0, 60);
+                menuCtx.fillText("Yada yada yada yada yada yada yada yada. " +
+                                 "Yada yada yada yada yada yada.", 0, 90);
+                menuCtx.fillText("Yada yada yada yada yada yada yada yada. " +
+                                 "Yada yada yada yada yada yada.", 0, 120);
+                menuCtx.font = "bold 30px Arial";
+                menuCtx.fillText("Controls", 0, 180);
+                menuCtx.font = "30px Arial";
+                menuCtx.fillText("Up", 0, 215);
+                menuCtx.fillText("Arrow Up", 300, 215);
+                menuCtx.fillText("Down:", 0, 245);
+                menuCtx.fillText("Arrow Down", 300, 245);
+                menuCtx.fillText("Left:", 0, 275);
+                menuCtx.fillText("Arrow Left", 300, 275);
+                menuCtx.fillText("Right:", 0, 305);
+                menuCtx.fillText("Arrow Right", 300, 305);
+                menuCtx.fillText("Select:", 0, 335);
+                menuCtx.fillText("return/enter or spacebar", 300, 335);
+                menuCtx.fillText("Pause/Unpause:", 0, 365);
+                menuCtx.fillText("return/enter or spacebar", 300, 365);
+                menuCtx.fillText("Audio On/Off:", 0, 395);
+                menuCtx.fillText("press m or click on audio icon", 300, 395);
+                menuCtx.font = "bold 30px Arial";
+                menuCtx.fillText("Developed By", 0, 455);
+                menuCtx.font = "30px Arial";
+                menuCtx.fillText("Michael Castanieto", 0, 490);
             }
             else {
-                menuCtx.font = "50px Arial";
+                menuCtx.font = "100px Arial";
+                menuCtx.fillText("Melody Collider", 10, 200);
+                if (this.menuSelectState.gameStart) {
+                    menuCtx.font = "bold 50px Arial";
+                }
+                else {
+                    menuCtx.font = "50px Arial";
+                }
+                menuCtx.fillText("Start Game", 215, 300);
+                if (this.menuSelectState.gameAbout) {
+                    menuCtx.font = "bold 50px Arial";
+                }
+                else {
+                    menuCtx.font = "50px Arial";
+                }
+                menuCtx.fillText("About Game", 200, 400);
             }
-            menuCtx.fillText("Start Game", 215, 300);
-            if (this.menuSelectState.gameAbout) {
-                menuCtx.font = "bold 50px Arial";
-            }
-            else {
-                menuCtx.font = "50px Arial";
-            }
-            menuCtx.fillText("About Game", 200, 400);
 }
 
 Game.prototype.menuAction = function (action, menuCtx) {
@@ -136,14 +171,19 @@ Game.prototype.menuAction = function (action, menuCtx) {
     switch (action) {
         case 'up':
         case 'down':
-            this.menuSelectState.gameStart = !this.menuSelectState.gameStart;
-            this.menuSelectState.gameAbout = !this.menuSelectState.gameStart;
+            if (!this.isAbout) {
+                this.menuSelectState.gameStart = !this.menuSelectState.gameStart;
+                this.menuSelectState.gameAbout = !this.menuSelectState.gameStart;
+            }
             break;
         case 'select':
             menuCtx.clearRect(0, 0, DIM_X, DIM_Y);
             if (this.menuSelectState.gameStart) {
                 this.isMenu = false;
                 this.levelStart('level 1');
+            }
+            if (this.menuSelectState.gameAbout) {
+                this.isAbout = !this.isAbout;
             }
             break;
     }
