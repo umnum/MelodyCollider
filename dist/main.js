@@ -48633,6 +48633,7 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 369:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -48786,7 +48787,7 @@ Game.prototype.menuAction = function (action, menuCtx) {
     }
 }
 
-Game.prototype.pauseAction = function (action, pauseCtx, gameCtx, headerCtx, gridCtx) {
+Game.prototype.pauseAction = function (action, pauseCtx, gameCtx, headerCtx, gridCtx, audioCtx) {
     if (this.isPlayingMenuScreen()) return null;
     switch (action) {
         case 'left':
@@ -48800,6 +48801,7 @@ Game.prototype.pauseAction = function (action, pauseCtx, gameCtx, headerCtx, gri
             gameCtx.clearRect(0, 0, DIM_X, DIM_Y);
             headerCtx.clearRect(0, 0, DIM_X, DIM_Y);
             gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            audioCtx.clearRect(0, 0, DIM_X, DIM_Y);
             this.isPaused = !this.isGamePaused();
             if (!this.pauseSelectState.gameContinue) {
                 this.isPaused = true;
@@ -49012,7 +49014,6 @@ module.exports = Game;
   \**************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 57:0-14 */
 /***/ ((module) => {
 
 function GameView(game, gameCtx, gridCtx, menuCtx, headerCtx, pauseCtx, audioCtx) {
@@ -49066,8 +49067,8 @@ GameView.prototype.bindKeyHandlers = function (game) {
     key('space', function () {game.menuAction('select', that.menuCtx)});
     key('left', function () {game.pauseAction('left')});
     key('right', function () {game.pauseAction('right')});
-    key('enter', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx)});
-    key('space', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx)});
+    key('enter', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.audioCtx)});
+    key('space', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.audioCtx)});
     key('m', function () {game.toggleAudio()});
 }
 
