@@ -5,9 +5,7 @@
   "description": "Melody Collider is a game developed entirely in JavaScript",
   "main": "webpack.config.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack --watch --mode=development",
-    "postinstall": "webpack"
+    "start": "webpack --watch --mode=development"
   },
   "engines": {
     "node": "14.11.0",
@@ -28,5 +26,5 @@
   "bugs": {
     "url": "https://github.com/umnum/MelodyCollider/issues"
   },
-  "homepage": ""
+  "homepage": "melody-collider.herokuapp.com"
 }
