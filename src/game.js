@@ -293,6 +293,17 @@ Game.prototype.addOrbs = function (orbPositions, orbColors, orbNotes, numOrbs) {
 Game.prototype.removeOrb = function(orbIndex) {
     let removedOrb = this.orbs[orbIndex]
     this.orbs = this.orbs.slice(0,orbIndex).concat(this.orbs.slice(orbIndex+1));
+    // rearrange orbs to their correct sequence
+    for (let i = 0; i < this.orbs.length - 1; i++) {
+        if (this.orbs[i].color !== this.orbColors[i+1]) {
+            for (let j = i+1; j < this.orbs.length; j++) {
+                if (this.orbs[j].color === this.orbColors[i+1]) {
+                    [this.orbs[i], this.orbs[j]] = [this.orbs[j], this.orbs[i]];
+                    break;
+                }
+            }
+        }
+    }
     return removedOrb;
 }
 
@@ -439,6 +450,7 @@ Game.prototype.moveObjects = function (gridCtx, gameCtx) {
     this.orbs.forEach(function (orb, idx) {
         isOrbRemoved = orb.move(gridCtx, gameCtx, that.player.getPosition());
         if (isOrbRemoved) {
+            debugger
             let removedOrb = that.removeOrb(idx);
             that.player.orbSequence.push(removedOrb);
             that.player.notes.push(removedOrb.note);
