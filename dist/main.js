@@ -48633,6 +48633,7 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 498:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -49032,9 +49033,9 @@ Game.prototype.drawGrid = function (gridCtx, level) {
 }
 
 Game.prototype.drawSafetyZone = function (safetyZoneCtx, level) {
+    safetyZoneCtx.clearRect(0, 0, DIM_X, DIM_Y);
     switch (level) {
         case 'level 1':
-            safetyZoneCtx.clearRect(0, 0, DIM_X, DIM_Y);
             safetyZoneCtx.fillStyle = "magenta";
             safetyZoneCtx.beginPath();
             safetyZoneCtx.rect(580, 310, 100, 100);
@@ -49142,7 +49143,6 @@ module.exports = Game;
   \**************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 64:0-14 */
 /***/ ((module) => {
 
 function GameView(game, gameCtx, gridCtx, safetyZoneCtx, menuCtx, headerCtx, pauseCtx, audioCtx) {

@@ -395,9 +395,9 @@ Game.prototype.drawGrid = function (gridCtx, level) {
 }
 
 Game.prototype.drawSafetyZone = function (safetyZoneCtx, level) {
+    safetyZoneCtx.clearRect(0, 0, DIM_X, DIM_Y);
     switch (level) {
         case 'level 1':
-            safetyZoneCtx.clearRect(0, 0, DIM_X, DIM_Y);
             safetyZoneCtx.fillStyle = "magenta";
             safetyZoneCtx.beginPath();
             safetyZoneCtx.rect(580, 310, 100, 100);
