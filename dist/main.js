@@ -49146,7 +49146,7 @@ module.exports = Game;
   \**************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 64:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 63:0-14 */
 /***/ ((module) => {
 
 function GameView(game, gameCtx, gridCtx, safetyZoneCtx, menuCtx, headerCtx, pauseCtx, audioCtx) {
@@ -49203,7 +49203,6 @@ GameView.prototype.bindKeyHandlers = function (game) {
     key('up', function () {game.menuAction('up')});
     key('down', function () {game.menuAction('down')});
     key('enter', function () {game.menuAction('select', that.menuCtx)});
-    key('space', function () {game.menuAction('select', that.menuCtx)});
     key('left', function () {game.pauseAction('left')});
     key('right', function () {game.pauseAction('right')});
     key('enter', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.safetyZoneCtx, that.audioCtx)});
