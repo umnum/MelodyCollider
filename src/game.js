@@ -120,7 +120,7 @@ Game.prototype.drawMenu = function (menuCtx) {
     // draw menu screen
             menuCtx.clearRect(0, 0, DIM_X, DIM_Y);
             if (this.isAbout) {
-                menuCtx.font = "bold 30px Arial";
+                menuCtx.font = "bold 25px Arial";
                 menuCtx.fillText("Description", 0, 30);
                 menuCtx.font = "20px Arial";
                 menuCtx.fillText("Yada yada yada yada yada yada yada yada. " +
@@ -129,26 +129,28 @@ Game.prototype.drawMenu = function (menuCtx) {
                                  "Yada yada yada yada yada yada.", 0, 90);
                 menuCtx.fillText("Yada yada yada yada yada yada yada yada. " +
                                  "Yada yada yada yada yada yada.", 0, 120);
-                menuCtx.font = "bold 30px Arial";
-                menuCtx.fillText("Controls", 0, 180);
-                menuCtx.font = "30px Arial";
-                menuCtx.fillText("Up", 0, 215);
-                menuCtx.fillText("Arrow Up", 300, 215);
-                menuCtx.fillText("Down:", 0, 245);
-                menuCtx.fillText("Arrow Down", 300, 245);
-                menuCtx.fillText("Left:", 0, 275);
-                menuCtx.fillText("Arrow Left", 300, 275);
-                menuCtx.fillText("Right:", 0, 305);
-                menuCtx.fillText("Arrow Right", 300, 305);
-                menuCtx.fillText("Select:", 0, 335);
-                menuCtx.fillText("return/enter or spacebar", 300, 335);
-                menuCtx.fillText("Pause/Unpause:", 0, 365);
-                menuCtx.fillText("return/enter or spacebar", 300, 365);
-                menuCtx.fillText("Audio On/Off:", 0, 395);
-                menuCtx.fillText("press m or click on audio icon", 300, 395);
-                menuCtx.font = "bold 30px Arial";
+                menuCtx.font = "bold 25px Arial";
+                menuCtx.fillText("Controls", 0, 165);
+                menuCtx.font = "25px Arial";
+                menuCtx.fillText("Up", 0, 200);
+                menuCtx.fillText("Arrow Up", 250, 200);
+                menuCtx.fillText("Down:", 0, 230);
+                menuCtx.fillText("Arrow Down", 250, 230);
+                menuCtx.fillText("Left:", 0, 260);
+                menuCtx.fillText("Arrow Left", 250, 260);
+                menuCtx.fillText("Right:", 0, 290);
+                menuCtx.fillText("Arrow Right", 250, 290);
+                menuCtx.fillText("Select:", 0, 320);
+                menuCtx.fillText("Return/Enter", 250, 320);
+                menuCtx.fillText("Pause/Unpause:", 0, 350);
+                menuCtx.fillText("Return/Enter", 250, 350);
+                menuCtx.fillText("Play Melody", 0, 380);
+                menuCtx.fillText("Spacebar", 250, 380);
+                menuCtx.fillText("Audio On/Off:", 0, 410);
+                menuCtx.fillText("Press m or Click on Audio Icon", 250, 410);
+                menuCtx.font = "bold 25px Arial";
                 menuCtx.fillText("Developed By", 0, 455);
-                menuCtx.font = "30px Arial";
+                menuCtx.font = "25px Arial";
                 menuCtx.fillText("Michael Castanieto", 0, 490);
             }
             else {
