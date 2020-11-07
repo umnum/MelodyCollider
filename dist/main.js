@@ -7,7 +7,6 @@
   \*****************************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 11:0-14 */
 /***/ ((module) => {
 
 function _arrayLikeToArray(arr, len) {
@@ -30,7 +29,6 @@ module.exports = _arrayLikeToArray;
   \***************************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 5:0-14 */
 /***/ ((module) => {
 
 function _arrayWithHoles(arr) {
@@ -47,7 +45,6 @@ module.exports = _arrayWithHoles;
   \***************************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 7:0-14 */
 /***/ ((module) => {
 
 function _classCallCheck(instance, Constructor) {
@@ -66,7 +63,6 @@ module.exports = _classCallCheck;
   \************************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 17:0-14 */
 /***/ ((module) => {
 
 function _defineProperties(target, props) {
@@ -95,7 +91,6 @@ module.exports = _createClass;
   \*********************************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 28:0-14 */
 /***/ ((module) => {
 
 function _iterableToArrayLimit(arr, i) {
@@ -135,7 +130,6 @@ module.exports = _iterableToArrayLimit;
   \****************************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 5:0-14 */
 /***/ ((module) => {
 
 function _nonIterableRest() {
@@ -152,7 +146,6 @@ module.exports = _nonIterableRest;
   \**************************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 13:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var arrayWithHoles = __webpack_require__(/*! ./arrayWithHoles */ "./node_modules/@babel/runtime/helpers/arrayWithHoles.js");
@@ -177,7 +170,6 @@ module.exports = _slicedToArray;
   \***************************************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 12:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var arrayLikeToArray = __webpack_require__(/*! ./arrayLikeToArray */ "./node_modules/@babel/runtime/helpers/arrayLikeToArray.js");
@@ -201,8 +193,6 @@ module.exports = _unsupportedIterableToArray;
   \************************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: __webpack_exports__, top-level-this-exports, __webpack_require__ */
-/*! CommonJS bailout: this is used directly at 5:2-6 */
-/*! CommonJS bailout: exports is used directly at 2:75-82 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 (function (global, factory) {
@@ -48643,7 +48633,6 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 409:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -48660,6 +48649,7 @@ function Game() {
     this.orbs = [];
     this.currentLevel = 1;
     this.isIntroSequence = false;
+    this.isSequence = false;
     this.isMenu = false;
     this.isAbout = false;
     this.isPaused = true;
@@ -48894,8 +48884,15 @@ Game.prototype.isPlayingIntroSequence = function () {
     return this.isIntroSequence;
 }
 
+Game.prototype.isPlayingSequence = function () {
+    return this.isSequence;
+}
+
 Game.prototype.levelStart = function (level) {
     let orbPositions;
+    this.player.notes = [];
+    this.player.colors = [];
+    this.player.orbSequence = [];
     switch (level) {
         case 'level 1':
             this.orbColors = ["red", "green", "blue"];
@@ -49020,13 +49017,57 @@ Game.prototype.drawGrid = function (gridCtx, level) {
 Game.prototype.playIntroSequence = function (gameCtx, level) {
        let isFinishedAnimating = false;
        this.orbs.forEach(function (orb, idx) {
-           isFinishedAnimating = orb.animateIntroSequence((idx+1)*50);
+           isFinishedAnimating = orb.animateSequence((idx+1)*50);
        });
+       if (isFinishedAnimating) {
+           this.orbs.forEach(function (orb) {
+               orb.audioCountdown = -1;
+           })
+       }
        this.orbs.forEach(function (orb) {
            orb.draw(gameCtx);
        });
        this.player.draw(gameCtx);
        this.isIntroSequence = !isFinishedAnimating;
+}
+
+Game.prototype.playSequence = function (gameCtx, level) {
+        let isFinishedAnimating = false;
+        this.player.playSequence(50);
+        let that = this;
+       this.orbs.forEach(function (orb, idx) {
+           let count = (idx + that.player.notes.length)*50 + 1;
+           isFinishedAnimating = orb.animateSequence(count);
+       });
+       if (isFinishedAnimating) {
+           this.orbs.forEach(function (orb) {
+               orb.audioCountdown = -1;
+           })
+           this.player.sequenceCount = 0;
+           this.player.audioCountdown= 0;
+       }
+       this.allObjects().forEach(function (object) {
+           object.draw(gameCtx);
+       })
+       this.isSequence = !isFinishedAnimating;
+}
+
+Game.prototype.stopSequence = function () {
+    this.isSequence = false; 
+    this.orbs.forEach(function(orb) {
+        orb.audioCountdown = -1; 
+        orb.color = orb.orgColor
+    }); 
+    this.player.color = this.player.orgColor; 
+    this.player.audioCountdown = 0; 
+    this.player.sequenceCount = 0;
+    this.player.colors = [];
+    this.player.notes = [];
+    let that = this
+    this.player.orbSequence.forEach(function(orb) {
+        that.player.colors.push(orb.color);
+        that.player.notes.push(orb.note);
+    });
 }
 
 Game.prototype.moveObjects = function (gridCtx, gameCtx) {
@@ -49035,7 +49076,11 @@ Game.prototype.moveObjects = function (gridCtx, gameCtx) {
     this.orbs.forEach(function (orb, idx) {
         isOrbRemoved = orb.move(gridCtx, gameCtx, that.player.getPosition());
         if (isOrbRemoved) {
-            let removedOrbColor = that.removeOrb(idx).orgColor;
+            let removedOrb = that.removeOrb(idx);
+            that.player.orbSequence.push(removedOrb);
+            that.player.notes.push(removedOrb.note);
+            that.player.colors.push(removedOrb.color);
+            let removedOrbColor = removedOrb.orgColor;
             let targetOrbColor = that.orbColors.shift();
             orb.synth.triggerAttackRelease(orb.note, "16n");
             if (removedOrbColor !== targetOrbColor) {
@@ -49064,7 +49109,7 @@ module.exports = Game;
   \**************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 57:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 62:0-14 */
 /***/ ((module) => {
 
 function GameView(game, gameCtx, gridCtx, menuCtx, headerCtx, pauseCtx, audioCtx) {
@@ -49099,6 +49144,9 @@ GameView.prototype.handleGame = function (e) {
                 this.game.playIntroSequence(this.gameCtx, 'level ' + this.game.currentLevel);
             }
             else {
+                if (this.game.isPlayingSequence()) {
+                    this.game.playSequence(this.gameCtx, null);
+                }
                 this.game.moveObjects(this.gridCtx, this.gameCtx);
                 this.game.draw(this.gameCtx);
             }
@@ -49121,6 +49169,8 @@ GameView.prototype.bindKeyHandlers = function (game) {
     key('enter', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.audioCtx)});
     key('space', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.audioCtx)});
     key('m', function () {game.toggleAudio()});
+    //key('d', function () {game.isSequence = true});
+    //key('f', function () {game.stopSequence()});
 }
 
 module.exports = GameView;
@@ -49132,15 +49182,39 @@ module.exports = GameView;
   !*** ./src/moving_object.js ***!
   \******************************/
 /*! unknown exports (runtime-defined) */
-/*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 21:0-14 */
-/***/ ((module) => {
+/*! runtime requirements: module, __webpack_require__ */
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const Tone = __webpack_require__(/*! tone */ "./node_modules/tone/build/esm/index.js");
 
 function MovingObject(object) {
     this.pos = object.pos;
     this.vel = object.vel;
     this.radius = object.radius;
     this.color = object.color;
+    this.synth = new Tone.AMSynth({
+        harmonicity: 3/1,
+        detune: 0,
+        oscillator: {
+            type: "sine"
+        },
+        envelope: {
+            attack: 0.01,
+            decay: 0.1,
+            sustain: 0.5,
+            release: 0.7,
+        },
+        modulation: {
+            type: "sine"
+        },
+        modulationEnvelope: {
+            attack: 0.05,
+            decay: 0.1,
+            sustain: 1,
+            release: 0.5
+        }
+    }).toDestination();
+
 };
 
 MovingObject.prototype.draw = function (ctx) {
@@ -49166,12 +49240,10 @@ module.exports = MovingObject;
   \********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 158:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_object.js");
 const Util = __webpack_require__(/*! ./utils */ "./src/utils.js");
-const Tone = __webpack_require__(/*! tone */ "./node_modules/tone/build/esm/index.js");
 
 const DEFAULTS = {
     RADIUS: 15,
@@ -49189,51 +49261,15 @@ function Orb(pos, color, note) {
     MovingObject.call(this, properties);
 
     this.audioCountdown = -1;
-    this.visualCountdown = 0;
+    this.visualCountdown = -1;
     this.note = note;
     this.orgColor = this.color;
     this.flashColor = "magenta";
-    this.synth = new Tone.AMSynth({
-        harmonicity: 3/1,
-        detune: 0,
-        oscillator: {
-            type: "sine"
-        },
-        envelope: {
-            attack: 0.01,
-            decay: 0.1,
-            sustain: 0.5,
-            release: 0.7,
-        },
-        modulation: {
-            type: "sine"
-        },
-        modulationEnvelope: {
-            attack: 0.05,
-            decay: 0.1,
-            sustain: 1,
-            release: 0.5
-        }
-    }).toDestination();
 }
 
 Util.inherits(Orb, MovingObject);
 
 Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
-    //// Randomly playing each orb might be too confusing
-    //if (this.audioCountdown === 0) {
-        //this.audioCountdown = 100 + Math.floor(Math.random()*100);
-        //this.synth.triggerAttackRelease(this.note, "16n");
-        //this.visualCountdown = 20;
-        //this.color = this.flashColor;
-    //}
-    this.audioCountdown--;
-    if (this.visualCountdown > 0) {
-        this.visualCountdown--;
-    }
-    else if (this.visualCountdown === 0) {
-        this.color = this.orgColor;
-    }
     let newXPos = this.pos[0] + this.vel[0];
     let newYPos = this.pos[1] + this.vel[1];
     let hasCollided = (Math.sqrt(Math.pow(playerPos[0] - newXPos, 2) +
@@ -49302,7 +49338,7 @@ Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
     }
 }
 
-Orb.prototype.animateIntroSequence = function (count) {
+Orb.prototype.animateSequence = function (count) {
     let isFinishedAnimating = false;
     if (this.audioCountdown === -1) {
         this.audioCountdown = count
@@ -49336,7 +49372,6 @@ module.exports = Orb;
   \***********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 103:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_object.js");
@@ -49363,6 +49398,15 @@ function Player() {
         radius: DEFAULT.RADIUS,
         color: DEFAULT.COLOR
     }
+
+    this.notes = [];
+    this.colors = [];
+    this.orgColor = DEFAULT.COLOR;
+    this.orbSequence = [];
+    this.sequenceCount = 0;
+    this.audioCountdown = 0;
+    this.visualCountdown = 0;
+
     MovingObject.call(this, properties);
 }
 
@@ -49441,6 +49485,32 @@ Player.prototype.direction = function (key) {
     }
 }
 
+Player.prototype.playSequence = function (count) {
+    if (this.sequenceCount < this.notes.length) {
+        if (this.audioCountdown === 0) {
+            this.color = this.orgColor;
+            let note = this.notes.shift();
+            this.synth.triggerAttackRelease(note, "16n");
+            this.notes.push(note);
+            let color = this.colors.shift();
+            this.color = color;
+            this.colors.push(color);
+            this.visualCountdown = 20;
+            this.sequenceCount++
+            this.audioCountdown = count
+        }
+        if (this.audioCountdown !== 0) {
+            this.audioCountdown--;
+        }
+    }
+    if (this.visualCountdown > 0) {
+        this.visualCountdown--;
+    }
+    if (this.visualCountdown === 1) {
+        this.color = this.orgColor;
+    }
+}
+
 module.exports = Player;
 
 /***/ }),
@@ -49451,7 +49521,6 @@ module.exports = Player;
   \**********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 17:0-14 */
 /***/ ((module) => {
 
 const Util = {

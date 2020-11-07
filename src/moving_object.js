@@ -1,8 +1,33 @@
+const Tone = require("tone");
+
 function MovingObject(object) {
     this.pos = object.pos;
     this.vel = object.vel;
     this.radius = object.radius;
     this.color = object.color;
+    this.synth = new Tone.AMSynth({
+        harmonicity: 3/1,
+        detune: 0,
+        oscillator: {
+            type: "sine"
+        },
+        envelope: {
+            attack: 0.01,
+            decay: 0.1,
+            sustain: 0.5,
+            release: 0.7,
+        },
+        modulation: {
+            type: "sine"
+        },
+        modulationEnvelope: {
+            attack: 0.05,
+            decay: 0.1,
+            sustain: 1,
+            release: 0.5
+        }
+    }).toDestination();
+
 };
 
 MovingObject.prototype.draw = function (ctx) {

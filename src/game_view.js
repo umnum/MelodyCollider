@@ -30,6 +30,9 @@ GameView.prototype.handleGame = function (e) {
                 this.game.playIntroSequence(this.gameCtx, 'level ' + this.game.currentLevel);
             }
             else {
+                if (this.game.isPlayingSequence()) {
+                    this.game.playSequence(this.gameCtx, null);
+                }
                 this.game.moveObjects(this.gridCtx, this.gameCtx);
                 this.game.draw(this.gameCtx);
             }
@@ -52,6 +55,8 @@ GameView.prototype.bindKeyHandlers = function (game) {
     key('enter', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.audioCtx)});
     key('space', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.audioCtx)});
     key('m', function () {game.toggleAudio()});
+    //key('d', function () {game.isSequence = true});
+    //key('f', function () {game.stopSequence()});
 }
 
 module.exports = GameView;

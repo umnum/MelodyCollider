@@ -1,6 +1,5 @@
 const MovingObject = require("./moving_object");
 const Util = require("./utils");
-const Tone = require("tone");
 
 const DEFAULTS = {
     RADIUS: 15,
@@ -18,51 +17,15 @@ function Orb(pos, color, note) {
     MovingObject.call(this, properties);
 
     this.audioCountdown = -1;
-    this.visualCountdown = 0;
+    this.visualCountdown = -1;
     this.note = note;
     this.orgColor = this.color;
     this.flashColor = "magenta";
-    this.synth = new Tone.AMSynth({
-        harmonicity: 3/1,
-        detune: 0,
-        oscillator: {
-            type: "sine"
-        },
-        envelope: {
-            attack: 0.01,
-            decay: 0.1,
-            sustain: 0.5,
-            release: 0.7,
-        },
-        modulation: {
-            type: "sine"
-        },
-        modulationEnvelope: {
-            attack: 0.05,
-            decay: 0.1,
-            sustain: 1,
-            release: 0.5
-        }
-    }).toDestination();
 }
 
 Util.inherits(Orb, MovingObject);
 
 Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
-    //// Randomly playing each orb might be too confusing
-    //if (this.audioCountdown === 0) {
-        //this.audioCountdown = 100 + Math.floor(Math.random()*100);
-        //this.synth.triggerAttackRelease(this.note, "16n");
-        //this.visualCountdown = 20;
-        //this.color = this.flashColor;
-    //}
-    this.audioCountdown--;
-    if (this.visualCountdown > 0) {
-        this.visualCountdown--;
-    }
-    else if (this.visualCountdown === 0) {
-        this.color = this.orgColor;
-    }
     let newXPos = this.pos[0] + this.vel[0];
     let newYPos = this.pos[1] + this.vel[1];
     let hasCollided = (Math.sqrt(Math.pow(playerPos[0] - newXPos, 2) +
@@ -131,7 +94,7 @@ Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
     }
 }
 
-Orb.prototype.animateIntroSequence = function (count) {
+Orb.prototype.animateSequence = function (count) {
     let isFinishedAnimating = false;
     if (this.audioCountdown === -1) {
         this.audioCountdown = count

@@ -22,6 +22,15 @@ function Player() {
         radius: DEFAULT.RADIUS,
         color: DEFAULT.COLOR
     }
+
+    this.notes = [];
+    this.colors = [];
+    this.orgColor = DEFAULT.COLOR;
+    this.orbSequence = [];
+    this.sequenceCount = 0;
+    this.audioCountdown = 0;
+    this.visualCountdown = 0;
+
     MovingObject.call(this, properties);
 }
 
@@ -97,6 +106,32 @@ Player.prototype.direction = function (key) {
             isPressed.down = false;
             this.vel[1] = isPressed.up ? -DEFAULT.SPEED : 0;
             break;
+    }
+}
+
+Player.prototype.playSequence = function (count) {
+    if (this.sequenceCount < this.notes.length) {
+        if (this.audioCountdown === 0) {
+            this.color = this.orgColor;
+            let note = this.notes.shift();
+            this.synth.triggerAttackRelease(note, "16n");
+            this.notes.push(note);
+            let color = this.colors.shift();
+            this.color = color;
+            this.colors.push(color);
+            this.visualCountdown = 20;
+            this.sequenceCount++
+            this.audioCountdown = count
+        }
+        if (this.audioCountdown !== 0) {
+            this.audioCountdown--;
+        }
+    }
+    if (this.visualCountdown > 0) {
+        this.visualCountdown--;
+    }
+    if (this.visualCountdown === 1) {
+        this.color = this.orgColor;
     }
 }
 

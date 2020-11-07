@@ -12,6 +12,7 @@ function Game() {
     this.orbs = [];
     this.currentLevel = 1;
     this.isIntroSequence = false;
+    this.isSequence = false;
     this.isMenu = false;
     this.isAbout = false;
     this.isPaused = true;
@@ -246,8 +247,15 @@ Game.prototype.isPlayingIntroSequence = function () {
     return this.isIntroSequence;
 }
 
+Game.prototype.isPlayingSequence = function () {
+    return this.isSequence;
+}
+
 Game.prototype.levelStart = function (level) {
     let orbPositions;
+    this.player.notes = [];
+    this.player.colors = [];
+    this.player.orbSequence = [];
     switch (level) {
         case 'level 1':
             this.orbColors = ["red", "green", "blue"];
@@ -372,13 +380,57 @@ Game.prototype.drawGrid = function (gridCtx, level) {
 Game.prototype.playIntroSequence = function (gameCtx, level) {
        let isFinishedAnimating = false;
        this.orbs.forEach(function (orb, idx) {
-           isFinishedAnimating = orb.animateIntroSequence((idx+1)*50);
+           isFinishedAnimating = orb.animateSequence((idx+1)*50);
        });
+       if (isFinishedAnimating) {
+           this.orbs.forEach(function (orb) {
+               orb.audioCountdown = -1;
+           })
+       }
        this.orbs.forEach(function (orb) {
            orb.draw(gameCtx);
        });
        this.player.draw(gameCtx);
        this.isIntroSequence = !isFinishedAnimating;
+}
+
+Game.prototype.playSequence = function (gameCtx, level) {
+        let isFinishedAnimating = false;
+        this.player.playSequence(50);
+        let that = this;
+       this.orbs.forEach(function (orb, idx) {
+           let count = (idx + that.player.notes.length)*50 + 1;
+           isFinishedAnimating = orb.animateSequence(count);
+       });
+       if (isFinishedAnimating) {
+           this.orbs.forEach(function (orb) {
+               orb.audioCountdown = -1;
+           })
+           this.player.sequenceCount = 0;
+           this.player.audioCountdown= 0;
+       }
+       this.allObjects().forEach(function (object) {
+           object.draw(gameCtx);
+       })
+       this.isSequence = !isFinishedAnimating;
+}
+
+Game.prototype.stopSequence = function () {
+    this.isSequence = false; 
+    this.orbs.forEach(function(orb) {
+        orb.audioCountdown = -1; 
+        orb.color = orb.orgColor
+    }); 
+    this.player.color = this.player.orgColor; 
+    this.player.audioCountdown = 0; 
+    this.player.sequenceCount = 0;
+    this.player.colors = [];
+    this.player.notes = [];
+    let that = this
+    this.player.orbSequence.forEach(function(orb) {
+        that.player.colors.push(orb.color);
+        that.player.notes.push(orb.note);
+    });
 }
 
 Game.prototype.moveObjects = function (gridCtx, gameCtx) {
@@ -387,7 +439,11 @@ Game.prototype.moveObjects = function (gridCtx, gameCtx) {
     this.orbs.forEach(function (orb, idx) {
         isOrbRemoved = orb.move(gridCtx, gameCtx, that.player.getPosition());
         if (isOrbRemoved) {
-            let removedOrbColor = that.removeOrb(idx).orgColor;
+            let removedOrb = that.removeOrb(idx);
+            that.player.orbSequence.push(removedOrb);
+            that.player.notes.push(removedOrb.note);
+            that.player.colors.push(removedOrb.color);
+            let removedOrbColor = removedOrb.orgColor;
             let targetOrbColor = that.orbColors.shift();
             orb.synth.triggerAttackRelease(orb.note, "16n");
             if (removedOrbColor !== targetOrbColor) {
