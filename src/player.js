@@ -30,6 +30,7 @@ function Player() {
     this.sequenceCount = 0;
     this.audioCountdown = 0;
     this.visualCountdown = 0;
+    this.isSafe = false;
 
     MovingObject.call(this, properties);
 }
@@ -44,11 +45,12 @@ Player.prototype.getPosition = function () {
     return this.pos;
 }
 
-Player.prototype.move = function (gridCtx, gameCtx) {
+Player.prototype.move = function (gridCtx, gameCtx, safetyZoneCtx) {
     let newXPos = this.pos[0] + this.vel[0];
     let newYPos = this.pos[1] + this.vel[1];
     let imageDataX = gridCtx.getImageData(newXPos - DEFAULT.RADIUS, this.pos[1] - DEFAULT.RADIUS, 2*DEFAULT.RADIUS, 2*DEFAULT.RADIUS).data
     let imageDataY = gridCtx.getImageData(this.pos[0] - DEFAULT.RADIUS, newYPos - DEFAULT.RADIUS, 2*DEFAULT.RADIUS, 2*DEFAULT.RADIUS).data
+    let safetyZoneImageData = safetyZoneCtx.getImageData(this.pos[0] - DEFAULT.RADIUS, this.pos[1] - DEFAULT.RADIUS, 2*DEFAULT.RADIUS, 2*DEFAULT.RADIUS).data
     // check x-y collisions seperately, to allow smooth sliding along grid walls
     let isCollisionX = false; // check grid's Alpha channel for collision with Player along x-axis
     let isCollisionY = false; // check grid's Alpha channel for collision with Player along y-axis
@@ -64,6 +66,14 @@ Player.prototype.move = function (gridCtx, gameCtx) {
             break;
         }
     }
+    let isCurrentlySafe = true
+    for (let i = 3; i < safetyZoneImageData.length; i+=4) {
+        if (safetyZoneImageData[i] === 0) {
+            isCurrentlySafe = false;
+            break;
+        }
+    }
+    this.isSafe = isCurrentlySafe;
     if (!isCollisionX) {
         this.pos[0] = newXPos;
     }

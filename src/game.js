@@ -9,6 +9,7 @@ const HEADER_DIM_Y = 100;
 
 function Game() {
     this.player = new Player();
+    this.playerWasSafe = false;
     this.orbs = [];
     this.currentLevel = 1;
     this.isIntroSequence = false;
@@ -16,7 +17,6 @@ function Game() {
     this.isMenu = false;
     this.isAbout = false;
     this.isPaused = true;
-    this.isSafe = false;
     this.menuSelectState = {
         gameStart: true,
         gameAbout: false
@@ -44,7 +44,7 @@ Game.prototype.isGamePaused = function () {
 }
 
 Game.prototype.isInsideSafetyZone = function () {
-    return this.isSafe;
+    return this.player.isSafe;
 }
 
 Game.prototype.playMenuScreen = function (menuCtx) {
@@ -492,7 +492,11 @@ Game.prototype.moveObjects = function (gridCtx, gameCtx, safetyZoneCtx) {
         this.levelStart(nextLevel);
         this.isIntroSequence = true;
     }
-    this.player.move(gridCtx, gameCtx);
+    this.player.move(gridCtx, gameCtx, safetyZoneCtx);
+    if (this.playerWasSafe && !this.player.isSafe && this.isPlayingSequence()) {
+        this.stopSequence();
+    }
+    this.playerWasSafe = this.player.isSafe
 };
 
 module.exports = Game;

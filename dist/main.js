@@ -48633,7 +48633,7 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 498:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 502:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -48647,6 +48647,7 @@ const HEADER_DIM_Y = 100;
 
 function Game() {
     this.player = new Player();
+    this.playerWasSafe = false;
     this.orbs = [];
     this.currentLevel = 1;
     this.isIntroSequence = false;
@@ -48654,7 +48655,6 @@ function Game() {
     this.isMenu = false;
     this.isAbout = false;
     this.isPaused = true;
-    this.isSafe = false;
     this.menuSelectState = {
         gameStart: true,
         gameAbout: false
@@ -48682,7 +48682,7 @@ Game.prototype.isGamePaused = function () {
 }
 
 Game.prototype.isInsideSafetyZone = function () {
-    return this.isSafe;
+    return this.player.isSafe;
 }
 
 Game.prototype.playMenuScreen = function (menuCtx) {
@@ -49130,7 +49130,11 @@ Game.prototype.moveObjects = function (gridCtx, gameCtx, safetyZoneCtx) {
         this.levelStart(nextLevel);
         this.isIntroSequence = true;
     }
-    this.player.move(gridCtx, gameCtx);
+    this.player.move(gridCtx, gameCtx, safetyZoneCtx);
+    if (this.playerWasSafe && !this.player.isSafe && this.isPlayingSequence()) {
+        this.stopSequence();
+    }
+    this.playerWasSafe = this.player.isSafe
 };
 
 module.exports = Game;
@@ -49195,6 +49199,7 @@ GameView.prototype.bindKeyHandlers = function (game) {
     key('down', function () {game.player.direction('down')});
     key('left', function () {game.player.direction('left')});
     key('right', function () {game.player.direction('right')});
+    key('space', function () {game.isSequence = (game.player.isSafe ? true : false)});
     key('up', function () {game.menuAction('up')});
     key('down', function () {game.menuAction('down')});
     key('enter', function () {game.menuAction('select', that.menuCtx)});
@@ -49202,9 +49207,8 @@ GameView.prototype.bindKeyHandlers = function (game) {
     key('left', function () {game.pauseAction('left')});
     key('right', function () {game.pauseAction('right')});
     key('enter', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.safetyZoneCtx, that.audioCtx)});
-    key('space', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.safetyZoneCtx, that.audioCtx)});
+    //key('space', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.safetyZoneCtx, that.audioCtx)});
     key('m', function () {game.toggleAudio()});
-    //key('d', function () {game.isSequence = true});
     //key('f', function () {game.stopSequence()});
 }
 
@@ -49459,6 +49463,7 @@ function Player() {
     this.sequenceCount = 0;
     this.audioCountdown = 0;
     this.visualCountdown = 0;
+    this.isSafe = false;
 
     MovingObject.call(this, properties);
 }
@@ -49473,11 +49478,12 @@ Player.prototype.getPosition = function () {
     return this.pos;
 }
 
-Player.prototype.move = function (gridCtx, gameCtx) {
+Player.prototype.move = function (gridCtx, gameCtx, safetyZoneCtx) {
     let newXPos = this.pos[0] + this.vel[0];
     let newYPos = this.pos[1] + this.vel[1];
     let imageDataX = gridCtx.getImageData(newXPos - DEFAULT.RADIUS, this.pos[1] - DEFAULT.RADIUS, 2*DEFAULT.RADIUS, 2*DEFAULT.RADIUS).data
     let imageDataY = gridCtx.getImageData(this.pos[0] - DEFAULT.RADIUS, newYPos - DEFAULT.RADIUS, 2*DEFAULT.RADIUS, 2*DEFAULT.RADIUS).data
+    let safetyZoneImageData = safetyZoneCtx.getImageData(this.pos[0] - DEFAULT.RADIUS, this.pos[1] - DEFAULT.RADIUS, 2*DEFAULT.RADIUS, 2*DEFAULT.RADIUS).data
     // check x-y collisions seperately, to allow smooth sliding along grid walls
     let isCollisionX = false; // check grid's Alpha channel for collision with Player along x-axis
     let isCollisionY = false; // check grid's Alpha channel for collision with Player along y-axis
@@ -49493,6 +49499,14 @@ Player.prototype.move = function (gridCtx, gameCtx) {
             break;
         }
     }
+    let isCurrentlySafe = true
+    for (let i = 3; i < safetyZoneImageData.length; i+=4) {
+        if (safetyZoneImageData[i] === 0) {
+            isCurrentlySafe = false;
+            break;
+        }
+    }
+    this.isSafe = isCurrentlySafe;
     if (!isCollisionX) {
         this.pos[0] = newXPos;
     }

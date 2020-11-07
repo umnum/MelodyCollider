@@ -48,6 +48,7 @@ GameView.prototype.bindKeyHandlers = function (game) {
     key('down', function () {game.player.direction('down')});
     key('left', function () {game.player.direction('left')});
     key('right', function () {game.player.direction('right')});
+    key('space', function () {game.isSequence = (game.player.isSafe ? true : false)});
     key('up', function () {game.menuAction('up')});
     key('down', function () {game.menuAction('down')});
     key('enter', function () {game.menuAction('select', that.menuCtx)});
@@ -55,9 +56,8 @@ GameView.prototype.bindKeyHandlers = function (game) {
     key('left', function () {game.pauseAction('left')});
     key('right', function () {game.pauseAction('right')});
     key('enter', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.safetyZoneCtx, that.audioCtx)});
-    key('space', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.safetyZoneCtx, that.audioCtx)});
+    //key('space', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.safetyZoneCtx, that.audioCtx)});
     key('m', function () {game.toggleAudio()});
-    //key('d', function () {game.isSequence = true});
     //key('f', function () {game.stopSequence()});
 }
 
