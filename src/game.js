@@ -16,6 +16,7 @@ function Game() {
     this.isMenu = false;
     this.isAbout = false;
     this.isPaused = true;
+    this.isSafe = false;
     this.menuSelectState = {
         gameStart: true,
         gameAbout: false
@@ -40,6 +41,10 @@ Game.prototype.isPlayingMenuScreen = function () {
 
 Game.prototype.isGamePaused = function () {
     return this.isPaused;
+}
+
+Game.prototype.isInsideSafetyZone = function () {
+    return this.isSafe;
 }
 
 Game.prototype.playMenuScreen = function (menuCtx) {
@@ -190,7 +195,7 @@ Game.prototype.menuAction = function (action, menuCtx) {
     }
 }
 
-Game.prototype.pauseAction = function (action, pauseCtx, gameCtx, headerCtx, gridCtx, audioCtx) {
+Game.prototype.pauseAction = function (action, pauseCtx, gameCtx, headerCtx, gridCtx, safetyZoneCtx, audioCtx) {
     if (this.isPlayingMenuScreen()) return null;
     switch (action) {
         case 'left':
@@ -205,6 +210,7 @@ Game.prototype.pauseAction = function (action, pauseCtx, gameCtx, headerCtx, gri
             headerCtx.clearRect(0, 0, DIM_X, DIM_Y);
             gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
             audioCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            safetyZoneCtx.clearRect(0, 0, DIM_X, DIM_Y);
             this.isPaused = !this.isGamePaused();
             if (!this.pauseSelectState.gameContinue) {
                 this.isPaused = true;
@@ -388,6 +394,22 @@ Game.prototype.drawGrid = function (gridCtx, level) {
     }
 }
 
+Game.prototype.drawSafetyZone = function (safetyZoneCtx, level) {
+    switch (level) {
+        case 'level 1':
+            safetyZoneCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            safetyZoneCtx.fillStyle = "magenta";
+            safetyZoneCtx.beginPath();
+            safetyZoneCtx.rect(580, 310, 100, 100);
+            safetyZoneCtx.fill();
+            safetyZoneCtx.font = "30px Arial";
+            safetyZoneCtx.fillStyle = "black";
+            safetyZoneCtx.fillText("Safety", 590, 350);
+            safetyZoneCtx.fillText("Zone", 595, 390);
+            break;
+    }
+}
+
 Game.prototype.playIntroSequence = function (gameCtx, level) {
        let isFinishedAnimating = false;
        this.orbs.forEach(function (orb, idx) {
@@ -444,13 +466,12 @@ Game.prototype.stopSequence = function () {
     });
 }
 
-Game.prototype.moveObjects = function (gridCtx, gameCtx) {
+Game.prototype.moveObjects = function (gridCtx, gameCtx, safetyZoneCtx) {
     let isOrbRemoved = false;
     let that = this;
     this.orbs.forEach(function (orb, idx) {
-        isOrbRemoved = orb.move(gridCtx, gameCtx, that.player.getPosition());
+        isOrbRemoved = orb.move(gridCtx, gameCtx, safetyZoneCtx, that.player.getPosition());
         if (isOrbRemoved) {
-            debugger
             let removedOrb = that.removeOrb(idx);
             that.player.orbSequence.push(removedOrb);
             that.player.notes.push(removedOrb.note);

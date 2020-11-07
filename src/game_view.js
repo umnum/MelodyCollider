@@ -1,7 +1,8 @@
-function GameView(game, gameCtx, gridCtx, menuCtx, headerCtx, pauseCtx, audioCtx) {
+function GameView(game, gameCtx, gridCtx, safetyZoneCtx, menuCtx, headerCtx, pauseCtx, audioCtx) {
     this.game = game;
     this.gameCtx = gameCtx;
     this.gridCtx = gridCtx;
+    this.safetyZoneCtx = safetyZoneCtx;
     this.menuCtx = menuCtx;
     this.headerCtx = headerCtx;
     this.pauseCtx = pauseCtx;
@@ -24,6 +25,7 @@ GameView.prototype.handleGame = function (e) {
         }
         else {
             this.game.drawGrid(this.gridCtx, 'level ' + this.game.currentLevel);
+            this.game.drawSafetyZone(this.safetyZoneCtx, 'level ' + this.game.currentLevel);
             this.game.drawHeader(this.headerCtx);
             this.game.drawAudioIcon(this.audioCtx);
             if (this.game.isPlayingIntroSequence()) {
@@ -33,7 +35,7 @@ GameView.prototype.handleGame = function (e) {
                 if (this.game.isPlayingSequence()) {
                     this.game.playSequence(this.gameCtx, null);
                 }
-                this.game.moveObjects(this.gridCtx, this.gameCtx);
+                this.game.moveObjects(this.gridCtx, this.gameCtx, this.safetyZoneCtx);
                 this.game.draw(this.gameCtx);
             }
         }
@@ -52,8 +54,8 @@ GameView.prototype.bindKeyHandlers = function (game) {
     key('space', function () {game.menuAction('select', that.menuCtx)});
     key('left', function () {game.pauseAction('left')});
     key('right', function () {game.pauseAction('right')});
-    key('enter', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.audioCtx)});
-    key('space', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.audioCtx)});
+    key('enter', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.safetyZoneCtx, that.audioCtx)});
+    key('space', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.safetyZoneCtx, that.audioCtx)});
     key('m', function () {game.toggleAudio()});
     //key('d', function () {game.isSequence = true});
     //key('f', function () {game.stopSequence()});

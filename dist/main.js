@@ -48653,6 +48653,7 @@ function Game() {
     this.isMenu = false;
     this.isAbout = false;
     this.isPaused = true;
+    this.isSafe = false;
     this.menuSelectState = {
         gameStart: true,
         gameAbout: false
@@ -48677,6 +48678,10 @@ Game.prototype.isPlayingMenuScreen = function () {
 
 Game.prototype.isGamePaused = function () {
     return this.isPaused;
+}
+
+Game.prototype.isInsideSafetyZone = function () {
+    return this.isSafe;
 }
 
 Game.prototype.playMenuScreen = function (menuCtx) {
@@ -48827,7 +48832,7 @@ Game.prototype.menuAction = function (action, menuCtx) {
     }
 }
 
-Game.prototype.pauseAction = function (action, pauseCtx, gameCtx, headerCtx, gridCtx, audioCtx) {
+Game.prototype.pauseAction = function (action, pauseCtx, gameCtx, headerCtx, gridCtx, safetyZoneCtx, audioCtx) {
     if (this.isPlayingMenuScreen()) return null;
     switch (action) {
         case 'left':
@@ -48842,6 +48847,7 @@ Game.prototype.pauseAction = function (action, pauseCtx, gameCtx, headerCtx, gri
             headerCtx.clearRect(0, 0, DIM_X, DIM_Y);
             gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
             audioCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            safetyZoneCtx.clearRect(0, 0, DIM_X, DIM_Y);
             this.isPaused = !this.isGamePaused();
             if (!this.pauseSelectState.gameContinue) {
                 this.isPaused = true;
@@ -49025,6 +49031,22 @@ Game.prototype.drawGrid = function (gridCtx, level) {
     }
 }
 
+Game.prototype.drawSafetyZone = function (safetyZoneCtx, level) {
+    switch (level) {
+        case 'level 1':
+            safetyZoneCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            safetyZoneCtx.fillStyle = "magenta";
+            safetyZoneCtx.beginPath();
+            safetyZoneCtx.rect(580, 310, 100, 100);
+            safetyZoneCtx.fill();
+            safetyZoneCtx.font = "30px Arial";
+            safetyZoneCtx.fillStyle = "black";
+            safetyZoneCtx.fillText("Safety", 590, 350);
+            safetyZoneCtx.fillText("Zone", 595, 390);
+            break;
+    }
+}
+
 Game.prototype.playIntroSequence = function (gameCtx, level) {
        let isFinishedAnimating = false;
        this.orbs.forEach(function (orb, idx) {
@@ -49081,13 +49103,12 @@ Game.prototype.stopSequence = function () {
     });
 }
 
-Game.prototype.moveObjects = function (gridCtx, gameCtx) {
+Game.prototype.moveObjects = function (gridCtx, gameCtx, safetyZoneCtx) {
     let isOrbRemoved = false;
     let that = this;
     this.orbs.forEach(function (orb, idx) {
-        isOrbRemoved = orb.move(gridCtx, gameCtx, that.player.getPosition());
+        isOrbRemoved = orb.move(gridCtx, gameCtx, safetyZoneCtx, that.player.getPosition());
         if (isOrbRemoved) {
-            debugger
             let removedOrb = that.removeOrb(idx);
             that.player.orbSequence.push(removedOrb);
             that.player.notes.push(removedOrb.note);
@@ -49121,13 +49142,14 @@ module.exports = Game;
   \**************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 62:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 64:0-14 */
 /***/ ((module) => {
 
-function GameView(game, gameCtx, gridCtx, menuCtx, headerCtx, pauseCtx, audioCtx) {
+function GameView(game, gameCtx, gridCtx, safetyZoneCtx, menuCtx, headerCtx, pauseCtx, audioCtx) {
     this.game = game;
     this.gameCtx = gameCtx;
     this.gridCtx = gridCtx;
+    this.safetyZoneCtx = safetyZoneCtx;
     this.menuCtx = menuCtx;
     this.headerCtx = headerCtx;
     this.pauseCtx = pauseCtx;
@@ -49150,6 +49172,7 @@ GameView.prototype.handleGame = function (e) {
         }
         else {
             this.game.drawGrid(this.gridCtx, 'level ' + this.game.currentLevel);
+            this.game.drawSafetyZone(this.safetyZoneCtx, 'level ' + this.game.currentLevel);
             this.game.drawHeader(this.headerCtx);
             this.game.drawAudioIcon(this.audioCtx);
             if (this.game.isPlayingIntroSequence()) {
@@ -49159,7 +49182,7 @@ GameView.prototype.handleGame = function (e) {
                 if (this.game.isPlayingSequence()) {
                     this.game.playSequence(this.gameCtx, null);
                 }
-                this.game.moveObjects(this.gridCtx, this.gameCtx);
+                this.game.moveObjects(this.gridCtx, this.gameCtx, this.safetyZoneCtx);
                 this.game.draw(this.gameCtx);
             }
         }
@@ -49178,8 +49201,8 @@ GameView.prototype.bindKeyHandlers = function (game) {
     key('space', function () {game.menuAction('select', that.menuCtx)});
     key('left', function () {game.pauseAction('left')});
     key('right', function () {game.pauseAction('right')});
-    key('enter', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.audioCtx)});
-    key('space', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.audioCtx)});
+    key('enter', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.safetyZoneCtx, that.audioCtx)});
+    key('space', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.safetyZoneCtx, that.audioCtx)});
     key('m', function () {game.toggleAudio()});
     //key('d', function () {game.isSequence = true});
     //key('f', function () {game.stopSequence()});
@@ -49281,7 +49304,7 @@ function Orb(pos, color, note) {
 
 Util.inherits(Orb, MovingObject);
 
-Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
+Orb.prototype.move = function (gridCtx, gameCtx, safetyZoneCtx, playerPos) {
     let newXPos = this.pos[0] + this.vel[0];
     let newYPos = this.pos[1] + this.vel[1];
     let hasCollided = (Math.sqrt(Math.pow(playerPos[0] - newXPos, 2) +
@@ -49290,22 +49313,28 @@ Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
                 return hasCollided;
             };
     // only need to check orb's image border edge that faces the direction of the collision
-    let gridImageDataX, gridImageDataY, gameImageDataX, gameImageDataY;
+    let gridImageDataX, gridImageDataY, 
+        gameImageDataX, gameImageDataY,
+        safetyZoneImageDataX, safetyZoneImageDataY;
     if (this.vel[0] < 0) {
         gridImageDataX = gridCtx.getImageData(newXPos - DEFAULTS.RADIUS, this.pos[1] - DEFAULTS.RADIUS, 1, 2*DEFAULTS.RADIUS).data
         gameImageDataX = gameCtx.getImageData(newXPos - DEFAULTS.RADIUS, this.pos[1] - DEFAULTS.RADIUS, 1, 2*DEFAULTS.RADIUS).data
+        safetyZoneImageDataX = safetyZoneCtx.getImageData(newXPos - DEFAULTS.RADIUS, this.pos[1] - DEFAULTS.RADIUS, 1, 2*DEFAULTS.RADIUS).data
     }
     else {
         gridImageDataX = gridCtx.getImageData(newXPos + DEFAULTS.RADIUS, this.pos[1] - DEFAULTS.RADIUS, 1, 2*DEFAULTS.RADIUS).data
         gameImageDataX = gameCtx.getImageData(newXPos + DEFAULTS.RADIUS, this.pos[1] - DEFAULTS.RADIUS, 1, 2*DEFAULTS.RADIUS).data
+        safetyZoneImageDataX = safetyZoneCtx.getImageData(newXPos + DEFAULTS.RADIUS, this.pos[1] - DEFAULTS.RADIUS, 1, 2*DEFAULTS.RADIUS).data
     }
     if (this.vel[1] < 0) {
         gridImageDataY = gridCtx.getImageData(this.pos[0] - DEFAULTS.RADIUS, newYPos - DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS, 1).data
         gameImageDataY = gameCtx.getImageData(this.pos[0] - DEFAULTS.RADIUS, newYPos - DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS, 1).data
+        safetyZoneImageDataY = safetyZoneCtx.getImageData(this.pos[0] - DEFAULTS.RADIUS, newYPos - DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS, 1).data
     }
     else {
         gridImageDataY = gridCtx.getImageData(this.pos[0] - DEFAULTS.RADIUS, newYPos + DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS, 1).data
         gameImageDataY = gameCtx.getImageData(this.pos[0] - DEFAULTS.RADIUS, newYPos + DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS, 1).data
+        safetyZoneImageDataY = safetyZoneCtx.getImageData(this.pos[0] - DEFAULTS.RADIUS, newYPos + DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS, 1).data
     }
     let isCollisionX = false; // check grid's Alpha channel for collision with Player along x-axis
     let isCollisionY = false; // check grid's Alpha channel for collision with Player along y-axis
@@ -49321,6 +49350,12 @@ Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
             break;
         }
     }
+    for (let i = 0; i < safetyZoneImageDataX.length; i+=3) {
+        if (safetyZoneImageDataX[i] > 0) {
+            isCollisionX = true;
+            break;
+        }
+    }
     for (let i = 0; i < gridImageDataY.length; i+=3) {
         if (gridImageDataY[i] > 0) {
             isCollisionY = true;
@@ -49329,6 +49364,12 @@ Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
     }
     for (let i = 0; i < gameImageDataY.length; i+=3) {
         if (gameImageDataY[i] > 0) {
+            isCollisionY = true;
+            break;
+        }
+    }
+    for (let i = 0; i < safetyZoneImageDataY.length; i+=3) {
+        if (safetyZoneImageDataY[i] > 0) {
             isCollisionY = true;
             break;
         }
@@ -49641,12 +49682,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const headerCanvas = document.getElementById("header-canvas");
     const pauseCanvas = document.getElementById("pause-canvas");
     const audioCanvas = document.getElementById("audio-canvas");
+    const safetyZoneCanvas = document.getElementById("safety-zone-canvas");
     const gameCtx = gameCanvas.getContext('2d');
     const gridCtx = gridCanvas.getContext('2d');
     const menuCtx = menuCanvas.getContext('2d');
     const headerCtx = headerCanvas.getContext('2d');
     const pauseCtx = pauseCanvas.getContext('2d');
     const audioCtx = audioCanvas.getContext('2d');
+    const safetyZoneCtx = safetyZoneCanvas.getContext('2d');
 
     audioCanvas.addEventListener("click", function (event) {game.toggleAudio()})
 
@@ -49654,6 +49697,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const gameView = new GameView(game, 
                                   gameCtx, 
                                   gridCtx, 
+                                  safetyZoneCtx, 
                                   menuCtx, 
                                   headerCtx, 
                                   pauseCtx,

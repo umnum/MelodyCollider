@@ -25,7 +25,7 @@ function Orb(pos, color, note) {
 
 Util.inherits(Orb, MovingObject);
 
-Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
+Orb.prototype.move = function (gridCtx, gameCtx, safetyZoneCtx, playerPos) {
     let newXPos = this.pos[0] + this.vel[0];
     let newYPos = this.pos[1] + this.vel[1];
     let hasCollided = (Math.sqrt(Math.pow(playerPos[0] - newXPos, 2) +
@@ -34,22 +34,28 @@ Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
                 return hasCollided;
             };
     // only need to check orb's image border edge that faces the direction of the collision
-    let gridImageDataX, gridImageDataY, gameImageDataX, gameImageDataY;
+    let gridImageDataX, gridImageDataY, 
+        gameImageDataX, gameImageDataY,
+        safetyZoneImageDataX, safetyZoneImageDataY;
     if (this.vel[0] < 0) {
         gridImageDataX = gridCtx.getImageData(newXPos - DEFAULTS.RADIUS, this.pos[1] - DEFAULTS.RADIUS, 1, 2*DEFAULTS.RADIUS).data
         gameImageDataX = gameCtx.getImageData(newXPos - DEFAULTS.RADIUS, this.pos[1] - DEFAULTS.RADIUS, 1, 2*DEFAULTS.RADIUS).data
+        safetyZoneImageDataX = safetyZoneCtx.getImageData(newXPos - DEFAULTS.RADIUS, this.pos[1] - DEFAULTS.RADIUS, 1, 2*DEFAULTS.RADIUS).data
     }
     else {
         gridImageDataX = gridCtx.getImageData(newXPos + DEFAULTS.RADIUS, this.pos[1] - DEFAULTS.RADIUS, 1, 2*DEFAULTS.RADIUS).data
         gameImageDataX = gameCtx.getImageData(newXPos + DEFAULTS.RADIUS, this.pos[1] - DEFAULTS.RADIUS, 1, 2*DEFAULTS.RADIUS).data
+        safetyZoneImageDataX = safetyZoneCtx.getImageData(newXPos + DEFAULTS.RADIUS, this.pos[1] - DEFAULTS.RADIUS, 1, 2*DEFAULTS.RADIUS).data
     }
     if (this.vel[1] < 0) {
         gridImageDataY = gridCtx.getImageData(this.pos[0] - DEFAULTS.RADIUS, newYPos - DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS, 1).data
         gameImageDataY = gameCtx.getImageData(this.pos[0] - DEFAULTS.RADIUS, newYPos - DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS, 1).data
+        safetyZoneImageDataY = safetyZoneCtx.getImageData(this.pos[0] - DEFAULTS.RADIUS, newYPos - DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS, 1).data
     }
     else {
         gridImageDataY = gridCtx.getImageData(this.pos[0] - DEFAULTS.RADIUS, newYPos + DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS, 1).data
         gameImageDataY = gameCtx.getImageData(this.pos[0] - DEFAULTS.RADIUS, newYPos + DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS, 1).data
+        safetyZoneImageDataY = safetyZoneCtx.getImageData(this.pos[0] - DEFAULTS.RADIUS, newYPos + DEFAULTS.RADIUS, 2*DEFAULTS.RADIUS, 1).data
     }
     let isCollisionX = false; // check grid's Alpha channel for collision with Player along x-axis
     let isCollisionY = false; // check grid's Alpha channel for collision with Player along y-axis
@@ -65,6 +71,12 @@ Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
             break;
         }
     }
+    for (let i = 0; i < safetyZoneImageDataX.length; i+=3) {
+        if (safetyZoneImageDataX[i] > 0) {
+            isCollisionX = true;
+            break;
+        }
+    }
     for (let i = 0; i < gridImageDataY.length; i+=3) {
         if (gridImageDataY[i] > 0) {
             isCollisionY = true;
@@ -73,6 +85,12 @@ Orb.prototype.move = function (gridCtx, gameCtx, playerPos) {
     }
     for (let i = 0; i < gameImageDataY.length; i+=3) {
         if (gameImageDataY[i] > 0) {
+            isCollisionY = true;
+            break;
+        }
+    }
+    for (let i = 0; i < safetyZoneImageDataY.length; i+=3) {
+        if (safetyZoneImageDataY[i] > 0) {
             isCollisionY = true;
             break;
         }
