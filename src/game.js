@@ -197,7 +197,7 @@ Game.prototype.menuAction = function (action, menuCtx) {
     }
 }
 
-Game.prototype.pauseAction = function (action, pauseCtx, gameCtx, headerCtx, gridCtx, safetyZoneCtx, audioCtx) {
+Game.prototype.pauseAction = function (action, pauseCtx, gameCtx, headerCtx, gridCtx, safetyZoneCtx, instructionsCtx, audioCtx) {
     if (this.isPlayingMenuScreen()) return null;
     switch (action) {
         case 'left':
@@ -213,6 +213,7 @@ Game.prototype.pauseAction = function (action, pauseCtx, gameCtx, headerCtx, gri
             gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
             audioCtx.clearRect(0, 0, DIM_X, DIM_Y);
             safetyZoneCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            instructionsCtx.clearRect(0, 0, DIM_X, DIM_Y);
             this.isPaused = !this.isGamePaused();
             if (!this.pauseSelectState.gameContinue) {
                 this.isPaused = true;
