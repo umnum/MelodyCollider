@@ -28,6 +28,30 @@ function Game() {
         audioOn: true
     }
     this.orbColors = [];
+    this.gridObstacles = {
+        level4: {
+            obs1: {
+                moveRight: true,
+                posFrom: [225, 166],
+                posTo: [225, 333],
+                xMin: 225,
+                xMax: 475
+            },
+            obs2: {
+                moveUp: false,
+                posFrom: [0, 116],
+                posTo: [235, 116],
+                yMin: 166,
+                yMax: 333
+            },
+            obs3: {moveUp: true,
+                posFrom: [465, 333],
+                posTo: [680, 333],
+                yMin: 166,
+                yMax: 333
+            }
+        }
+    }
 }
 
 Game.prototype.menuStart = function () {
@@ -268,10 +292,10 @@ Game.prototype.levelStart = function (level) {
     switch (level) {
         case 'level 1':
             this.orbColors = ["red", "green", "blue"];
-            orbPositions = [[100, 400], [300, 100] , [600, 200]];
+            orbPositions = [[100, 100], [300, 100] , [600, 200]];
             orbNotes = ["c4", "d4", "e4"]
             this.orbs = this.addOrbs(orbPositions, this.orbColors, orbNotes, 3);
-            this.player.setPosition([100,100]);
+            this.player.setPosition([100,360]);
             this.isIntroSequence = true;
             break;
         case 'level 2':
@@ -284,8 +308,16 @@ Game.prototype.levelStart = function (level) {
         case 'level 3':
             this.orbColors = ["red", "blue", "orange", "green", "orange", "green"];
             orbNotes = ["e4", "a4", "e5", "g4", "e5", "g4"];
-            orbPositions = [[580, 80], [100, 400] , [200, 200], [300, 300], [400, 450], [600, 250]];
+            orbPositions = [[580, 80], [100, 400] , [200, 200], [400, 300], [500, 450], [600, 250]];
             this.orbs = this.addOrbs(orbPositions, this.orbColors, orbNotes, 6);
+            this.player.setPosition([100, 100]);
+            break;
+        case 'level 4':
+            this.orbColors = ["green", "blue", "brown", "brown", "blue", "green", "pink", "green", "blue", "blue"];
+            orbNotes = ["g#4", "a4", "b4", "b4", "a4", "g#4", "f#4", "g#4", "a4", "a4"];
+            orbPositions = [[580, 80], [100, 400] , [200, 200], [300, 300], [400, 450], 
+                            [600, 250], [525, 450], [400, 350], [300, 350], [300, 100]];
+            this.orbs = this.addOrbs(orbPositions, this.orbColors, orbNotes, 10);
             this.player.setPosition([100, 100]);
             break;
     }
@@ -394,6 +426,72 @@ Game.prototype.drawGrid = function (gridCtx, level) {
             gridCtx.lineWidth = 20;
             gridCtx.stroke();
             break;
+        case 'level 4':
+            let {level4} = this.gridObstacles;
+            gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            gridCtx.beginPath();
+            gridCtx.strokeStyle = "black";
+            gridCtx.fill();
+            gridCtx.rect(10, 10, 680, 480)
+            gridCtx.moveTo(225, 0);
+            gridCtx.lineTo(225, 166);
+            gridCtx.moveTo(225, 333);
+            gridCtx.lineTo(225, 500);
+            gridCtx.moveTo(475, 0);
+            gridCtx.lineTo(475, 166);
+            gridCtx.moveTo(475, 333);
+            gridCtx.lineTo(475, 500);
+            if (level4.obs1.posFrom[0] > level4.obs1.xMax) {
+                level4.obs1.moveRight = false;
+            }
+            if (level4.obs1.posFrom[0] < level4.obs1.xMin) {
+                level4.obs1.moveRight = true;
+            }
+            if (level4.obs2.posFrom[1] > level4.obs2.yMax) {
+                level4.obs2.moveUp = true;
+            }
+            if (level4.obs2.posFrom[1] < level4.obs2.yMin) {
+                level4.obs2.moveUp = false;
+            }
+            if (level4.obs3.posFrom[1] > level4.obs3.yMax) {
+                level4.obs3.moveUp = true;
+            }
+            if (level4.obs3.posFrom[1] < level4.obs3.yMin) {
+                level4.obs3.moveUp = false;
+            }
+            if(level4.obs1.moveRight) {
+                level4.obs1.posFrom[0] += 2;
+                level4.obs1.posTo[0] += 2;
+            }
+            else {
+                level4.obs1.posFrom[0] -= 2;
+                level4.obs1.posTo[0] -= 2;
+            }
+            if(level4.obs2.moveUp) {
+                level4.obs2.posFrom[1] -= 2;
+                level4.obs2.posTo[1] -= 2;
+            }
+            else {
+                level4.obs2.posFrom[1] += 2;
+                level4.obs2.posTo[1] += 2;
+            }
+            if(level4.obs3.moveUp) {
+                level4.obs3.posFrom[1] -= 2;
+                level4.obs3.posTo[1] -= 2;
+            }
+            else {
+                level4.obs3.posFrom[1] += 2;
+                level4.obs3.posTo[1] += 2;
+            }
+            gridCtx.moveTo(level4.obs1.posFrom[0], level4.obs1.posFrom[1]);
+            gridCtx.lineTo(level4.obs1.posTo[0], level4.obs1.posTo[1]);
+            gridCtx.moveTo(level4.obs2.posFrom[0], level4.obs2.posFrom[1]);
+            gridCtx.lineTo(level4.obs2.posTo[0], level4.obs2.posTo[1]);
+            gridCtx.moveTo(level4.obs3.posFrom[0], level4.obs3.posFrom[1]);
+            gridCtx.lineTo(level4.obs3.posTo[0], level4.obs3.posTo[1]);
+            gridCtx.lineWidth = 20;
+            gridCtx.stroke();
+            break;
     }
 }
 
@@ -404,7 +502,7 @@ Game.prototype.drawSafetyZone = function (safetyZoneCtx, instructionsCtx, level)
         case 'level 1':
             safetyZoneCtx.fillStyle = "magenta";
             safetyZoneCtx.beginPath();
-            safetyZoneCtx.rect(580, 310, 100, 100);
+            safetyZoneCtx.rect(585, 310, 100, 100);
             safetyZoneCtx.fill();
             safetyZoneCtx.font = "30px Arial";
             safetyZoneCtx.fillStyle = "black";
@@ -413,7 +511,8 @@ Game.prototype.drawSafetyZone = function (safetyZoneCtx, instructionsCtx, level)
             // TODO: add Safety Zone instructions
             if (!this.player.isSafe) {
                 instructionsCtx.font = "30px Arial";
-                instructionsCtx.fillText("Run to safety!", 170, 370);
+                instructionsCtx.fillText("Move the gray", 170, 350);
+                instructionsCtx.fillText("orb to safety!", 180, 380);
                 instructionsCtx.lineWidth = 3;
                 instructionsCtx.beginPath();
                 instructionsCtx.moveTo(400, 360);
@@ -447,7 +546,7 @@ Game.prototype.drawSafetyZone = function (safetyZoneCtx, instructionsCtx, level)
         case 'level 2':
             safetyZoneCtx.fillStyle = "magenta";
             safetyZoneCtx.beginPath();
-            safetyZoneCtx.rect(580, 20, 100, 100);
+            safetyZoneCtx.rect(589, 20, 100, 100);
             safetyZoneCtx.fill();
             safetyZoneCtx.font = "30px Arial";
             safetyZoneCtx.fillStyle = "black";
@@ -463,6 +562,16 @@ Game.prototype.drawSafetyZone = function (safetyZoneCtx, instructionsCtx, level)
             safetyZoneCtx.fillStyle = "black";
             safetyZoneCtx.fillText("Safety", 400, 60);
             safetyZoneCtx.fillText("Zone", 405, 100);
+            break;
+        case 'level 4':
+            safetyZoneCtx.fillStyle = "magenta";
+            safetyZoneCtx.beginPath();
+            safetyZoneCtx.rect(585, 380, 100, 100);
+            safetyZoneCtx.fill();
+            safetyZoneCtx.font = "30px Arial";
+            safetyZoneCtx.fillStyle = "black";
+            safetyZoneCtx.fillText("Safety", 590, 425);
+            safetyZoneCtx.fillText("Zone", 595, 455);
             break;
     }
 }
