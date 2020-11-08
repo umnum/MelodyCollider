@@ -276,7 +276,7 @@ Game.prototype.levelStart = function (level) {
         case 'level 2':
             this.orbColors = ["red", "green", "blue", "purple", "orange"];
             orbNotes = ["c4", "d4", "e4", "a4", "g4"];
-            orbPositions = [[600, 80], [400, 100] , [100, 400], [300, 400], [550, 400]];
+            orbPositions = [[400, 280], [400, 100] , [100, 400], [300, 400], [550, 400]];
             this.orbs = this.addOrbs(orbPositions, this.orbColors, orbNotes, 5);
             this.player.setPosition([100,100]);
             break;
@@ -442,7 +442,26 @@ Game.prototype.drawSafetyZone = function (safetyZoneCtx, instructionsCtx, level)
                 instructionsCtx.fillText("Collect the orbs in", 170, 370);
                 instructionsCtx.fillText("the sequence played", 170, 400);
             }
-
+            break;
+        case 'level 2':
+            safetyZoneCtx.fillStyle = "magenta";
+            safetyZoneCtx.beginPath();
+            safetyZoneCtx.rect(580, 20, 100, 100);
+            safetyZoneCtx.fill();
+            safetyZoneCtx.font = "30px Arial";
+            safetyZoneCtx.fillStyle = "black";
+            safetyZoneCtx.fillText("Safety", 590, 60);
+            safetyZoneCtx.fillText("Zone", 595, 100);
+            break;
+        case 'level 3':
+            safetyZoneCtx.fillStyle = "magenta";
+            safetyZoneCtx.beginPath();
+            safetyZoneCtx.rect(390, 20, 100, 100);
+            safetyZoneCtx.fill();
+            safetyZoneCtx.font = "30px Arial";
+            safetyZoneCtx.fillStyle = "black";
+            safetyZoneCtx.fillText("Safety", 400, 60);
+            safetyZoneCtx.fillText("Zone", 405, 100);
             break;
     }
 }
