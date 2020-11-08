@@ -48633,7 +48633,6 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 689:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -48655,7 +48654,7 @@ function Game() {
     this.isMenu = false;
     this.isAbout = false;
     this.isPaused = true;
-    this.gameWon = false;
+    this.isWon = false;
     this.menuSelectState = {
         gameStart: true,
         gameAbout: false
@@ -48878,7 +48877,7 @@ Game.prototype.pauseAction = function (action, pauseCtx, gameCtx, headerCtx, gri
             safetyZoneCtx.clearRect(0, 0, DIM_X, DIM_Y);
             instructionsCtx.clearRect(0, 0, DIM_X, DIM_Y);
             this.isPaused = !this.isGamePaused();
-            if (!this.pauseSelectState.gameContinue || this.gameWon) {
+            if (!this.pauseSelectState.gameContinue || this.isWon) {
                 this.isPaused = true;
                 this.isMenu = true;
                 this.pauseSelectState.gameContinue = true;
@@ -48928,7 +48927,7 @@ Game.prototype.levelStart = function (level) {
     this.player.notes = [];
     this.player.colors = [];
     this.player.orbSequence = [];
-    this.gameWon = false;
+    this.isWon = false;
     switch (level) {
         case 'level 1':
             this.orbColors = ["red", "green", "blue"];
@@ -48965,7 +48964,7 @@ Game.prototype.levelStart = function (level) {
             this.orbNotes = [];
             this.orbPositions = [];
             this.orbs = [];
-            this.gameWon = true;
+            this.isWon = true;
             this.player.setPosition([DIM_X+100, DIM_Y+100]);
     }
 }
@@ -49018,7 +49017,7 @@ Game.prototype.drawHeader = function (headerCtx) {
     headerCtx.fillText("Level " + this.currentLevel, 500, 65);
 };
 
-Game.prototype.drawGrid = function (gridCtx, level) {
+Game.prototype.drawGrid = function (gridCtx, level, headerCtx, audioCtx) {
     switch (level) {
         case 'level 1':
             gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
@@ -49140,6 +49139,8 @@ Game.prototype.drawGrid = function (gridCtx, level) {
             gridCtx.stroke();
             break;
         case 'level 5':
+            headerCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            audioCtx.clearRect(0, 0, DIM_X, DIM_Y);
             gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
             gridCtx.font = "bold 100px Arial";
             gridCtx.fillText("You Won!", 150, 150);
@@ -49334,6 +49335,7 @@ module.exports = Game;
   \**************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
+/*! CommonJS bailout: module.exports is used directly at 66:0-14 */
 /***/ ((module) => {
 
 function GameView(game, gameCtx, gridCtx, safetyZoneCtx, instructionsCtx, menuCtx, headerCtx, pauseCtx, audioCtx) {
@@ -49363,10 +49365,12 @@ GameView.prototype.handleGame = function (e) {
             this.game.playPauseScreen(this.pauseCtx);
         }
         else {
-            this.game.drawGrid(this.gridCtx, 'level ' + this.game.currentLevel);
+            this.game.drawGrid(this.gridCtx, 'level ' + this.game.currentLevel, this.headerCtx, this.audioCtx);
             this.game.drawSafetyZone(this.safetyZoneCtx, this.instructionsCtx, 'level ' + this.game.currentLevel);
-            this.game.drawHeader(this.headerCtx);
-            this.game.drawAudioIcon(this.audioCtx);
+            if (!this.game.isWon) {
+                this.game.drawHeader(this.headerCtx)
+                this.game.drawAudioIcon(this.audioCtx);
+            }
             if (this.game.isPlayingIntroSequence()) {
                 this.game.playIntroSequence(this.gameCtx, 'level ' + this.game.currentLevel);
             }

@@ -17,7 +17,7 @@ function Game() {
     this.isMenu = false;
     this.isAbout = false;
     this.isPaused = true;
-    this.gameWon = false;
+    this.isWon = false;
     this.menuSelectState = {
         gameStart: true,
         gameAbout: false
@@ -240,7 +240,7 @@ Game.prototype.pauseAction = function (action, pauseCtx, gameCtx, headerCtx, gri
             safetyZoneCtx.clearRect(0, 0, DIM_X, DIM_Y);
             instructionsCtx.clearRect(0, 0, DIM_X, DIM_Y);
             this.isPaused = !this.isGamePaused();
-            if (!this.pauseSelectState.gameContinue || this.gameWon) {
+            if (!this.pauseSelectState.gameContinue || this.isWon) {
                 this.isPaused = true;
                 this.isMenu = true;
                 this.pauseSelectState.gameContinue = true;
@@ -290,7 +290,7 @@ Game.prototype.levelStart = function (level) {
     this.player.notes = [];
     this.player.colors = [];
     this.player.orbSequence = [];
-    this.gameWon = false;
+    this.isWon = false;
     switch (level) {
         case 'level 1':
             this.orbColors = ["red", "green", "blue"];
@@ -327,7 +327,7 @@ Game.prototype.levelStart = function (level) {
             this.orbNotes = [];
             this.orbPositions = [];
             this.orbs = [];
-            this.gameWon = true;
+            this.isWon = true;
             this.player.setPosition([DIM_X+100, DIM_Y+100]);
     }
 }
@@ -380,7 +380,7 @@ Game.prototype.drawHeader = function (headerCtx) {
     headerCtx.fillText("Level " + this.currentLevel, 500, 65);
 };
 
-Game.prototype.drawGrid = function (gridCtx, level) {
+Game.prototype.drawGrid = function (gridCtx, level, headerCtx, audioCtx) {
     switch (level) {
         case 'level 1':
             gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
@@ -502,6 +502,8 @@ Game.prototype.drawGrid = function (gridCtx, level) {
             gridCtx.stroke();
             break;
         case 'level 5':
+            headerCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            audioCtx.clearRect(0, 0, DIM_X, DIM_Y);
             gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
             gridCtx.font = "bold 100px Arial";
             gridCtx.fillText("You Won!", 150, 150);

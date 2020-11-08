@@ -25,10 +25,12 @@ GameView.prototype.handleGame = function (e) {
             this.game.playPauseScreen(this.pauseCtx);
         }
         else {
-            this.game.drawGrid(this.gridCtx, 'level ' + this.game.currentLevel);
+            this.game.drawGrid(this.gridCtx, 'level ' + this.game.currentLevel, this.headerCtx, this.audioCtx);
             this.game.drawSafetyZone(this.safetyZoneCtx, this.instructionsCtx, 'level ' + this.game.currentLevel);
-            this.game.drawHeader(this.headerCtx);
-            this.game.drawAudioIcon(this.audioCtx);
+            if (!this.game.isWon) {
+                this.game.drawHeader(this.headerCtx)
+                this.game.drawAudioIcon(this.audioCtx);
+            }
             if (this.game.isPlayingIntroSequence()) {
                 this.game.playIntroSequence(this.gameCtx, 'level ' + this.game.currentLevel);
             }
