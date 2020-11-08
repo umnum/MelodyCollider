@@ -396,8 +396,9 @@ Game.prototype.drawGrid = function (gridCtx, level) {
     }
 }
 
-Game.prototype.drawSafetyZone = function (safetyZoneCtx, level) {
+Game.prototype.drawSafetyZone = function (safetyZoneCtx, instructionsCtx, level) {
     safetyZoneCtx.clearRect(0, 0, DIM_X, DIM_Y);
+    instructionsCtx.clearRect(0, 0, DIM_X, DIM_Y);
     switch (level) {
         case 'level 1':
             safetyZoneCtx.fillStyle = "magenta";
@@ -408,6 +409,40 @@ Game.prototype.drawSafetyZone = function (safetyZoneCtx, level) {
             safetyZoneCtx.fillStyle = "black";
             safetyZoneCtx.fillText("Safety", 590, 350);
             safetyZoneCtx.fillText("Zone", 595, 390);
+            // TODO: add Safety Zone instructions
+            if (!this.player.isSafe) {
+                instructionsCtx.font = "30px Arial";
+                instructionsCtx.fillText("Run to safety!", 170, 370);
+                instructionsCtx.lineWidth = 3;
+                instructionsCtx.beginPath();
+                instructionsCtx.moveTo(400, 360);
+                instructionsCtx.lineTo(500, 360);
+                instructionsCtx.stroke();
+                instructionsCtx.beginPath();
+                instructionsCtx.moveTo(480, 340);
+                instructionsCtx.lineTo(500, 360);
+                instructionsCtx.stroke();
+                instructionsCtx.beginPath();
+                instructionsCtx.moveTo(480, 380);
+                instructionsCtx.lineTo(500, 360);
+                instructionsCtx.stroke();
+            }
+            else if (this.player.isSafe && !this.isPlayingSequence()) {
+                instructionsCtx.font = "30px Arial";
+                instructionsCtx.fillText("While in a Safety Zone,", 170, 370);
+                instructionsCtx.fillText("press", 170, 400);
+                instructionsCtx.font = "bold 30px Arial";
+                instructionsCtx.fillText("spacebar", 255, 400);
+                instructionsCtx.font = "30px Arial";
+                instructionsCtx.fillText("to hear ", 395, 400);
+                instructionsCtx.fillText("the orbs play their melody", 170, 430);
+            }
+            else {
+                instructionsCtx.font = "30px Arial";
+                instructionsCtx.fillText("Collect the orbs in", 170, 370);
+                instructionsCtx.fillText("the sequence played", 170, 400);
+            }
+
             break;
     }
 }

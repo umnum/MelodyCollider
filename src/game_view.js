@@ -1,8 +1,9 @@
-function GameView(game, gameCtx, gridCtx, safetyZoneCtx, menuCtx, headerCtx, pauseCtx, audioCtx) {
+function GameView(game, gameCtx, gridCtx, safetyZoneCtx, instructionsCtx, menuCtx, headerCtx, pauseCtx, audioCtx) {
     this.game = game;
     this.gameCtx = gameCtx;
     this.gridCtx = gridCtx;
     this.safetyZoneCtx = safetyZoneCtx;
+    this.instructionsCtx = instructionsCtx;
     this.menuCtx = menuCtx;
     this.headerCtx = headerCtx;
     this.pauseCtx = pauseCtx;
@@ -25,7 +26,7 @@ GameView.prototype.handleGame = function (e) {
         }
         else {
             this.game.drawGrid(this.gridCtx, 'level ' + this.game.currentLevel);
-            this.game.drawSafetyZone(this.safetyZoneCtx, 'level ' + this.game.currentLevel);
+            this.game.drawSafetyZone(this.safetyZoneCtx, this.instructionsCtx, 'level ' + this.game.currentLevel);
             this.game.drawHeader(this.headerCtx);
             this.game.drawAudioIcon(this.audioCtx);
             if (this.game.isPlayingIntroSequence()) {

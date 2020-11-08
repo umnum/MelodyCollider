@@ -48633,7 +48633,7 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 504:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 539:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -49034,8 +49034,9 @@ Game.prototype.drawGrid = function (gridCtx, level) {
     }
 }
 
-Game.prototype.drawSafetyZone = function (safetyZoneCtx, level) {
+Game.prototype.drawSafetyZone = function (safetyZoneCtx, instructionsCtx, level) {
     safetyZoneCtx.clearRect(0, 0, DIM_X, DIM_Y);
+    instructionsCtx.clearRect(0, 0, DIM_X, DIM_Y);
     switch (level) {
         case 'level 1':
             safetyZoneCtx.fillStyle = "magenta";
@@ -49046,6 +49047,40 @@ Game.prototype.drawSafetyZone = function (safetyZoneCtx, level) {
             safetyZoneCtx.fillStyle = "black";
             safetyZoneCtx.fillText("Safety", 590, 350);
             safetyZoneCtx.fillText("Zone", 595, 390);
+            // TODO: add Safety Zone instructions
+            if (!this.player.isSafe) {
+                instructionsCtx.font = "30px Arial";
+                instructionsCtx.fillText("Run to safety!", 170, 370);
+                instructionsCtx.lineWidth = 3;
+                instructionsCtx.beginPath();
+                instructionsCtx.moveTo(400, 360);
+                instructionsCtx.lineTo(500, 360);
+                instructionsCtx.stroke();
+                instructionsCtx.beginPath();
+                instructionsCtx.moveTo(480, 340);
+                instructionsCtx.lineTo(500, 360);
+                instructionsCtx.stroke();
+                instructionsCtx.beginPath();
+                instructionsCtx.moveTo(480, 380);
+                instructionsCtx.lineTo(500, 360);
+                instructionsCtx.stroke();
+            }
+            else if (this.player.isSafe && !this.isPlayingSequence()) {
+                instructionsCtx.font = "30px Arial";
+                instructionsCtx.fillText("While in a Safety Zone,", 170, 370);
+                instructionsCtx.fillText("press", 170, 400);
+                instructionsCtx.font = "bold 30px Arial";
+                instructionsCtx.fillText("spacebar", 255, 400);
+                instructionsCtx.font = "30px Arial";
+                instructionsCtx.fillText("to hear ", 395, 400);
+                instructionsCtx.fillText("the orbs play their melody", 170, 430);
+            }
+            else {
+                instructionsCtx.font = "30px Arial";
+                instructionsCtx.fillText("Collect the orbs in", 170, 370);
+                instructionsCtx.fillText("the sequence played", 170, 400);
+            }
+
             break;
     }
 }
@@ -49151,11 +49186,12 @@ module.exports = Game;
 /*! runtime requirements: module */
 /***/ ((module) => {
 
-function GameView(game, gameCtx, gridCtx, safetyZoneCtx, menuCtx, headerCtx, pauseCtx, audioCtx) {
+function GameView(game, gameCtx, gridCtx, safetyZoneCtx, instructionsCtx, menuCtx, headerCtx, pauseCtx, audioCtx) {
     this.game = game;
     this.gameCtx = gameCtx;
     this.gridCtx = gridCtx;
     this.safetyZoneCtx = safetyZoneCtx;
+    this.instructionsCtx = instructionsCtx;
     this.menuCtx = menuCtx;
     this.headerCtx = headerCtx;
     this.pauseCtx = pauseCtx;
@@ -49178,7 +49214,7 @@ GameView.prototype.handleGame = function (e) {
         }
         else {
             this.game.drawGrid(this.gridCtx, 'level ' + this.game.currentLevel);
-            this.game.drawSafetyZone(this.safetyZoneCtx, 'level ' + this.game.currentLevel);
+            this.game.drawSafetyZone(this.safetyZoneCtx, this.instructionsCtx, 'level ' + this.game.currentLevel);
             this.game.drawHeader(this.headerCtx);
             this.game.drawAudioIcon(this.audioCtx);
             if (this.game.isPlayingIntroSequence()) {
@@ -49698,6 +49734,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const pauseCanvas = document.getElementById("pause-canvas");
     const audioCanvas = document.getElementById("audio-canvas");
     const safetyZoneCanvas = document.getElementById("safety-zone-canvas");
+    const instructionsCanvas = document.getElementById("instructions-canvas");
     const gameCtx = gameCanvas.getContext('2d');
     const gridCtx = gridCanvas.getContext('2d');
     const menuCtx = menuCanvas.getContext('2d');
@@ -49705,6 +49742,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const pauseCtx = pauseCanvas.getContext('2d');
     const audioCtx = audioCanvas.getContext('2d');
     const safetyZoneCtx = safetyZoneCanvas.getContext('2d');
+    const instructionsCtx = instructionsCanvas.getContext('2d');
 
     audioCanvas.addEventListener("click", function (event) {game.toggleAudio()})
 
@@ -49713,6 +49751,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                   gameCtx, 
                                   gridCtx, 
                                   safetyZoneCtx, 
+                                  instructionsCtx, 
                                   menuCtx, 
                                   headerCtx, 
                                   pauseCtx,

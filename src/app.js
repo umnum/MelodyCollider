@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const pauseCanvas = document.getElementById("pause-canvas");
     const audioCanvas = document.getElementById("audio-canvas");
     const safetyZoneCanvas = document.getElementById("safety-zone-canvas");
+    const instructionsCanvas = document.getElementById("instructions-canvas");
     const gameCtx = gameCanvas.getContext('2d');
     const gridCtx = gridCanvas.getContext('2d');
     const menuCtx = menuCanvas.getContext('2d');
@@ -19,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const pauseCtx = pauseCanvas.getContext('2d');
     const audioCtx = audioCanvas.getContext('2d');
     const safetyZoneCtx = safetyZoneCanvas.getContext('2d');
+    const instructionsCtx = instructionsCanvas.getContext('2d');
 
     audioCanvas.addEventListener("click", function (event) {game.toggleAudio()})
 
@@ -27,6 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                   gameCtx, 
                                   gridCtx, 
                                   safetyZoneCtx, 
+                                  instructionsCtx, 
                                   menuCtx, 
                                   headerCtx, 
                                   pauseCtx,
