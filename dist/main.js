@@ -48633,7 +48633,7 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 668:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 689:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -48655,6 +48655,7 @@ function Game() {
     this.isMenu = false;
     this.isAbout = false;
     this.isPaused = true;
+    this.gameWon = false;
     this.menuSelectState = {
         gameStart: true,
         gameAbout: false
@@ -48877,7 +48878,7 @@ Game.prototype.pauseAction = function (action, pauseCtx, gameCtx, headerCtx, gri
             safetyZoneCtx.clearRect(0, 0, DIM_X, DIM_Y);
             instructionsCtx.clearRect(0, 0, DIM_X, DIM_Y);
             this.isPaused = !this.isGamePaused();
-            if (!this.pauseSelectState.gameContinue) {
+            if (!this.pauseSelectState.gameContinue || this.gameWon) {
                 this.isPaused = true;
                 this.isMenu = true;
                 this.pauseSelectState.gameContinue = true;
@@ -48927,6 +48928,7 @@ Game.prototype.levelStart = function (level) {
     this.player.notes = [];
     this.player.colors = [];
     this.player.orbSequence = [];
+    this.gameWon = false;
     switch (level) {
         case 'level 1':
             this.orbColors = ["red", "green", "blue"];
@@ -48958,6 +48960,13 @@ Game.prototype.levelStart = function (level) {
             this.orbs = this.addOrbs(orbPositions, this.orbColors, orbNotes, 10);
             this.player.setPosition([100, 100]);
             break;
+        case 'level 5':
+            this.orbColors = [];
+            this.orbNotes = [];
+            this.orbPositions = [];
+            this.orbs = [];
+            this.gameWon = true;
+            this.player.setPosition([DIM_X+100, DIM_Y+100]);
     }
 }
 
@@ -49129,6 +49138,18 @@ Game.prototype.drawGrid = function (gridCtx, level) {
             gridCtx.lineTo(level4.obs3.posTo[0], level4.obs3.posTo[1]);
             gridCtx.lineWidth = 20;
             gridCtx.stroke();
+            break;
+        case 'level 5':
+            gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            gridCtx.font = "bold 100px Arial";
+            gridCtx.fillText("You Won!", 150, 150);
+            gridCtx.font = "50px Arial";
+            gridCtx.fillText("Stay tuned for more levels...", 80, 280);
+            gridCtx.font = "50px Arial";
+            gridCtx.fillText("Press            to return", 150, 380);
+            gridCtx.fillText("to the menu screen", 180, 430);
+            gridCtx.font = "bold 50px Arial";
+            gridCtx.fillText("enter", 300, 380);
             break;
     }
 }
