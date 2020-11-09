@@ -48633,6 +48633,7 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 689:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -48785,12 +48786,10 @@ Game.prototype.drawMenu = function (menuCtx) {
                 menuCtx.font = "bold 25px Arial";
                 menuCtx.fillText("Description", 0, 30);
                 menuCtx.font = "20px Arial";
-                menuCtx.fillText("Yada yada yada yada yada yada yada yada. " +
-                                 "Yada yada yada yada yada yada.", 0, 60);
-                menuCtx.fillText("Yada yada yada yada yada yada yada yada. " +
-                                 "Yada yada yada yada yada yada.", 0, 90);
-                menuCtx.fillText("Yada yada yada yada yada yada yada yada. " +
-                                 "Yada yada yada yada yada yada.", 0, 120);
+                menuCtx.fillText("Chaos reigns as colorful orbs randomly collide in a grid. " +
+                                 "However, what unites", 0, 60);
+                menuCtx.fillText("them all is melody. Navigate the grid as a gray orb and bring order to the orbs", 0, 90);
+                menuCtx.fillText("by collecting them according to their melodic sequence.", 0, 120);
                 menuCtx.font = "bold 25px Arial";
                 menuCtx.fillText("Controls", 0, 165);
                 menuCtx.font = "25px Arial";
@@ -49335,7 +49334,6 @@ module.exports = Game;
   \**************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 66:0-14 */
 /***/ ((module) => {
 
 function GameView(game, gameCtx, gridCtx, safetyZoneCtx, instructionsCtx, menuCtx, headerCtx, pauseCtx, audioCtx) {
