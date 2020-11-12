@@ -2,6 +2,15 @@ html, body {
     margin: 0px;
 }
 
+#github-link, #github-logo {
+    display: block;
+    position: absolute;
+    top: 600px;
+    left: 550px;
+    width: 100px;
+    height: 100px;
+}
+
 canvas {
     display: block;
     position: absolute;
