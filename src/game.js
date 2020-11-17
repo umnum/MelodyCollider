@@ -632,6 +632,7 @@ Game.prototype.stopSequence = function () {
         orb.color = orb.orgColor
     }); 
     this.player.color = this.player.orgColor; 
+    this.player.imgFrame = 0;
     this.player.audioCountdown = 0; 
     this.player.sequenceCount = 0;
     this.player.colors = [];

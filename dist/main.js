@@ -48633,7 +48633,7 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 679:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 680:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -49270,6 +49270,7 @@ Game.prototype.stopSequence = function () {
         orb.color = orb.orgColor
     }); 
     this.player.color = this.player.orgColor; 
+    this.player.imgFrame = 0;
     this.player.audioCountdown = 0; 
     this.player.sequenceCount = 0;
     this.player.colors = [];
