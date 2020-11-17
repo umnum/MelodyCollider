@@ -48633,7 +48633,7 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 680:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 677:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -48657,6 +48657,10 @@ function Game() {
     this.isPaused = true;
     this.isWon = false;
     this.grid = null;
+    this.background = new Image();
+    this.background.src = '../images/sprites/background.gif';
+    this.safetyZone = new Image();
+    this.safetyZone.src = '../images/sprites/safety_zone.png';
     this.menuSelectState = {
         gameStart: true,
         gameAbout: false
@@ -49152,15 +49156,8 @@ Game.prototype.drawSafetyZone = function (safetyZoneCtx, instructionsCtx, level)
     instructionsCtx.clearRect(0, 0, DIM_X, DIM_Y);
     switch (level) {
         case 'level 1':
-            safetyZoneCtx.fillStyle = "magenta";
-            safetyZoneCtx.beginPath();
-            safetyZoneCtx.rect(550, 310, 100, 100);
-            safetyZoneCtx.fill();
-            safetyZoneCtx.font = "30px Arial";
-            safetyZoneCtx.fillStyle = "black";
-            safetyZoneCtx.fillText("Safety", 560, 350);
-            safetyZoneCtx.fillText("Zone", 575, 390);
-            // TODO: add Safety Zone instructions
+            instructionsCtx.drawImage(this.background, 0, 0, 700, 500);
+            safetyZoneCtx.drawImage(this.safetyZone, 550, 310, 100, 100);
             if (!this.player.isSafe) {
                 instructionsCtx.font = "30px Arial";
                 instructionsCtx.fillText("Move the gray", 170, 350);
