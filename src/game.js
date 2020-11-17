@@ -20,9 +20,9 @@ function Game() {
     this.isWon = false;
     this.grid = null;
     this.background = new Image();
-    this.background.src = '../images/sprites/background.gif';
+    this.background.src = './images/sprites/background.gif';
     this.safetyZone = new Image();
-    this.safetyZone.src = '../images/sprites/safety_zone.png';
+    this.safetyZone.src = './images/sprites/safety_zone.png';
     this.menuSelectState = {
         gameStart: true,
         gameAbout: false
