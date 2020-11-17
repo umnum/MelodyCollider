@@ -293,7 +293,7 @@ Game.prototype.levelStart = function (level) {
         case 'level 1':
             this.orbColors = ["red", "green", "blue"];
             orbPositions = [[100, 100], [300, 100] , [600, 200]];
-            orbNotes = ["c4", "d4", "e4"]
+            orbNotes = ["c4", "d4", "e4"];
             this.orbs = this.addOrbs(orbPositions, this.orbColors, orbNotes, 3);
             this.player.setPosition([100,360]);
             this.isIntroSequence = true;

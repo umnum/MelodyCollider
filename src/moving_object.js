@@ -6,7 +6,9 @@ function MovingObject(object) {
     this.radius = object.radius;
     this.color = object.color;
     this.sprite = null;
+    this.imgFrame = 0;
     this.loadImage();
+    this.isFlashing = false;
     this.synth = new Tone.AMSynth({
         harmonicity: 3/1,
         detune: 0,
@@ -36,23 +38,18 @@ MovingObject.prototype.loadImage = function () {
     if (!this.sprite) {
         this.sprite = new Image();
 
-        this.sprite.src = './images/sprites/ball.gif';
-        this.sprite.crossOrigin = "Anonymous";
+        this.sprite.src = './images/sprites/' + this.color + '_orb.png';
     }
 }
 
 MovingObject.prototype.draw = function (ctx) {
-    // draw a circle
-    //ctx.beginPath();
-    //ctx.arc(this.pos[0], this.pos[1], this.radius, 0, 2*Math.PI);
-    //ctx.closePath();
-    //// circle has no border
-    //ctx.strokeStyle = 'transparent';
-    //// fill circle with MovingObject color property
-    //ctx.fillStyle = this.color;
-    //ctx.fill();
-    //ctx.stroke();
-    ctx.drawImage(this.sprite, 50, 50, 50, 50);
+    if (this.isFlashing && this.imgFrame < 16) {
+        ctx.drawImage(this.sprite, this.sprite.height*this.imgFrame, 0, this.sprite.height, this.sprite.height, this.pos[0]-this.radius, this.pos[1]-this.radius, this.radius*2, this.radius*2);
+        this.imgFrame++;
+    }
+    else {
+        ctx.drawImage(this.sprite, 0, 0, this.sprite.height, this.sprite.height, this.pos[0]-this.radius, this.pos[1]-this.radius, this.radius*2, this.radius*2);
+    }
 };
 
 module.exports = MovingObject;

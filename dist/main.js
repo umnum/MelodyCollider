@@ -48930,7 +48930,7 @@ Game.prototype.levelStart = function (level) {
         case 'level 1':
             this.orbColors = ["red", "green", "blue"];
             orbPositions = [[100, 100], [300, 100] , [600, 200]];
-            orbNotes = ["c4", "d4", "e4"]
+            orbNotes = ["c4", "d4", "e4"];
             this.orbs = this.addOrbs(orbPositions, this.orbColors, orbNotes, 3);
             this.player.setPosition([100,360]);
             this.isIntroSequence = true;
@@ -49410,7 +49410,6 @@ module.exports = GameView;
   \******************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 58:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Tone = __webpack_require__(/*! tone */ "./node_modules/tone/build/esm/index.js");
@@ -49421,7 +49420,9 @@ function MovingObject(object) {
     this.radius = object.radius;
     this.color = object.color;
     this.sprite = null;
+    this.imgFrame = 0;
     this.loadImage();
+    this.isFlashing = false;
     this.synth = new Tone.AMSynth({
         harmonicity: 3/1,
         detune: 0,
@@ -49451,23 +49452,18 @@ MovingObject.prototype.loadImage = function () {
     if (!this.sprite) {
         this.sprite = new Image();
 
-        this.sprite.src = './images/sprites/ball.gif';
-        this.sprite.crossOrigin = "Anonymous";
+        this.sprite.src = './images/sprites/' + this.color + '_orb.png';
     }
 }
 
 MovingObject.prototype.draw = function (ctx) {
-    // draw a circle
-    //ctx.beginPath();
-    //ctx.arc(this.pos[0], this.pos[1], this.radius, 0, 2*Math.PI);
-    //ctx.closePath();
-    //// circle has no border
-    //ctx.strokeStyle = 'transparent';
-    //// fill circle with MovingObject color property
-    //ctx.fillStyle = this.color;
-    //ctx.fill();
-    //ctx.stroke();
-    ctx.drawImage(this.sprite, 50, 50, 50, 50);
+    if (this.isFlashing && this.imgFrame < 16) {
+        ctx.drawImage(this.sprite, this.sprite.height*this.imgFrame, 0, this.sprite.height, this.sprite.height, this.pos[0]-this.radius, this.pos[1]-this.radius, this.radius*2, this.radius*2);
+        this.imgFrame++;
+    }
+    else {
+        ctx.drawImage(this.sprite, 0, 0, this.sprite.height, this.sprite.height, this.pos[0]-this.radius, this.pos[1]-this.radius, this.radius*2, this.radius*2);
+    }
 };
 
 module.exports = MovingObject;
@@ -49486,7 +49482,7 @@ const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_ob
 const Util = __webpack_require__(/*! ./utils */ "./src/utils.js");
 
 const DEFAULTS = {
-    RADIUS: 15,
+    RADIUS: 16,
     SPEED: 3
 };
 
@@ -49603,12 +49599,14 @@ Orb.prototype.animateSequence = function (count) {
         this.color = this.orgColor;
     }
     if (this.audioCountdown === 1) {
-        this.visualCountdown = 20;
+        this.visualCountdown = 16;
         this.synth.triggerAttackRelease(this.note, "16n");
-        this.color = this.flashColor;
+        this.isFlashing = true;
     }
     if (this.visualCountdown === 1) {
         this.color = this.orgColor;
+        this.isFlashing = false;
+        this.imgFrame = 0;
         isFinishedAnimating = true;
     }
     if (this.audioCountdown !== 0) {
@@ -49630,6 +49628,7 @@ module.exports = Orb;
   \***********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
+/*! CommonJS bailout: module.exports is used directly at 166:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_object.js");
@@ -49637,8 +49636,8 @@ const Util = __webpack_require__(/*! ./utils */ "./src/utils.js");
 
 const DEFAULT = {
     COLOR: "gray",
-    RADIUS: 15,
-    POS: [15, 15],
+    RADIUS: 16,
+    POS: [16, 16],
     SPEED: 3
 };
 
@@ -49763,6 +49762,19 @@ Player.prototype.playSequence = function (count) {
             let color = this.colors.shift();
             this.color = color;
             this.colors.push(color);
+            switch (this.color) {
+                case 'red':
+                    this.imgFrame = 1;
+                    break;
+                case 'green':
+                    this.imgFrame = 2;
+                    break;
+                case 'blue':
+                    this.imgFrame = 3;
+                    break;
+                default:
+                    this.imgFrame = 0;
+            }
             this.visualCountdown = 20;
             this.sequenceCount++
             this.audioCountdown = count
@@ -49776,8 +49788,13 @@ Player.prototype.playSequence = function (count) {
     }
     if (this.visualCountdown === 1) {
         this.color = this.orgColor;
+        this.imgFrame = 0;
     }
 }
+
+Player.prototype.draw = function (ctx) {
+    ctx.drawImage(this.sprite, this.sprite.height*this.imgFrame, 0, this.sprite.height, this.sprite.height, this.pos[0]-this.radius, this.pos[1]-this.radius, this.radius*2, this.radius*2);
+};
 
 module.exports = Player;
 

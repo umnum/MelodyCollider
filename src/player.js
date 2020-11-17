@@ -3,8 +3,8 @@ const Util = require("./utils");
 
 const DEFAULT = {
     COLOR: "gray",
-    RADIUS: 15,
-    POS: [15, 15],
+    RADIUS: 16,
+    POS: [16, 16],
     SPEED: 3
 };
 
@@ -129,6 +129,19 @@ Player.prototype.playSequence = function (count) {
             let color = this.colors.shift();
             this.color = color;
             this.colors.push(color);
+            switch (this.color) {
+                case 'red':
+                    this.imgFrame = 1;
+                    break;
+                case 'green':
+                    this.imgFrame = 2;
+                    break;
+                case 'blue':
+                    this.imgFrame = 3;
+                    break;
+                default:
+                    this.imgFrame = 0;
+            }
             this.visualCountdown = 20;
             this.sequenceCount++
             this.audioCountdown = count
@@ -142,7 +155,12 @@ Player.prototype.playSequence = function (count) {
     }
     if (this.visualCountdown === 1) {
         this.color = this.orgColor;
+        this.imgFrame = 0;
     }
 }
+
+Player.prototype.draw = function (ctx) {
+    ctx.drawImage(this.sprite, this.sprite.height*this.imgFrame, 0, this.sprite.height, this.sprite.height, this.pos[0]-this.radius, this.pos[1]-this.radius, this.radius*2, this.radius*2);
+};
 
 module.exports = Player;

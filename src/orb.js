@@ -2,7 +2,7 @@ const MovingObject = require("./moving_object");
 const Util = require("./utils");
 
 const DEFAULTS = {
-    RADIUS: 15,
+    RADIUS: 16,
     SPEED: 3
 };
 
@@ -119,12 +119,14 @@ Orb.prototype.animateSequence = function (count) {
         this.color = this.orgColor;
     }
     if (this.audioCountdown === 1) {
-        this.visualCountdown = 20;
+        this.visualCountdown = 16;
         this.synth.triggerAttackRelease(this.note, "16n");
-        this.color = this.flashColor;
+        this.isFlashing = true;
     }
     if (this.visualCountdown === 1) {
         this.color = this.orgColor;
+        this.isFlashing = false;
+        this.imgFrame = 0;
         isFinishedAnimating = true;
     }
     if (this.audioCountdown !== 0) {
