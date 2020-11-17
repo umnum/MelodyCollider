@@ -139,6 +139,18 @@ Player.prototype.playSequence = function (count) {
                 case 'blue':
                     this.imgFrame = 3;
                     break;
+                case 'purple':
+                    this.imgFrame = 4;
+                    break;
+                case 'orange':
+                    this.imgFrame = 5;
+                    break;
+                case 'yellow':
+                    this.imgFrame = 6;
+                    break;
+                case 'pink':
+                    this.imgFrame = 7;
+                    break;
                 default:
                     this.imgFrame = 0;
             }

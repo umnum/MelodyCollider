@@ -18,6 +18,7 @@ function Game() {
     this.isAbout = false;
     this.isPaused = true;
     this.isWon = false;
+    this.grid = null;
     this.menuSelectState = {
         gameStart: true,
         gameAbout: false
@@ -297,6 +298,8 @@ Game.prototype.levelStart = function (level) {
             this.orbs = this.addOrbs(orbPositions, this.orbColors, orbNotes, 3);
             this.player.setPosition([100,360]);
             this.isIntroSequence = true;
+            this.grid = new Image();
+            this.grid.src = './images/sprites/level_1.png';
             break;
         case 'level 2':
             this.orbColors = ["red", "green", "blue", "purple", "orange"];
@@ -313,7 +316,7 @@ Game.prototype.levelStart = function (level) {
             this.player.setPosition([100, 100]);
             break;
         case 'level 4':
-            this.orbColors = ["green", "blue", "brown", "brown", "blue", "green", "pink", "green", "blue", "blue"];
+            this.orbColors = ["green", "blue", "yellow", "yellow", "blue", "green", "pink", "green", "blue", "blue"];
             orbNotes = ["g#4", "a4", "b4", "b4", "a4", "g#4", "f#4", "g#4", "a4", "a4"];
             orbPositions = [[580, 80], [100, 400] , [200, 200], [300, 300], [400, 450], 
                             [600, 250], [525, 450], [400, 350], [300, 350], [300, 100]];
@@ -381,17 +384,7 @@ Game.prototype.drawHeader = function (headerCtx) {
 Game.prototype.drawGrid = function (gridCtx, level, headerCtx, audioCtx) {
     switch (level) {
         case 'level 1':
-            gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
-            gridCtx.beginPath();
-            gridCtx.strokeStyle = "black";
-            gridCtx.fill();
-            gridCtx.rect(10, 10, 680, 480)
-            gridCtx.moveTo(200, 0);
-            gridCtx.lineTo(200, 200);
-            gridCtx.moveTo(680, 300);
-            gridCtx.lineTo(380, 300);
-            gridCtx.lineWidth = 20;
-            gridCtx.stroke();
+            gridCtx.drawImage(this.grid, 0, 0, 700, 500);
             break;
         case 'level 2':
             gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
@@ -523,12 +516,12 @@ Game.prototype.drawSafetyZone = function (safetyZoneCtx, instructionsCtx, level)
         case 'level 1':
             safetyZoneCtx.fillStyle = "magenta";
             safetyZoneCtx.beginPath();
-            safetyZoneCtx.rect(585, 310, 100, 100);
+            safetyZoneCtx.rect(550, 310, 100, 100);
             safetyZoneCtx.fill();
             safetyZoneCtx.font = "30px Arial";
             safetyZoneCtx.fillStyle = "black";
-            safetyZoneCtx.fillText("Safety", 590, 350);
-            safetyZoneCtx.fillText("Zone", 595, 390);
+            safetyZoneCtx.fillText("Safety", 560, 350);
+            safetyZoneCtx.fillText("Zone", 575, 390);
             // TODO: add Safety Zone instructions
             if (!this.player.isSafe) {
                 instructionsCtx.font = "30px Arial";
@@ -629,9 +622,6 @@ Game.prototype.playSequence = function (gameCtx, level) {
            this.player.sequenceCount = 0;
            this.player.audioCountdown= 0;
        }
-       this.allObjects().forEach(function (object) {
-           object.draw(gameCtx);
-       })
        this.isSequence = !isFinishedAnimating;
 }
 
