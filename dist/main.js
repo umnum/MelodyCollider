@@ -7,7 +7,6 @@
   \*****************************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 11:0-14 */
 /***/ ((module) => {
 
 function _arrayLikeToArray(arr, len) {
@@ -30,7 +29,6 @@ module.exports = _arrayLikeToArray;
   \***************************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 5:0-14 */
 /***/ ((module) => {
 
 function _arrayWithHoles(arr) {
@@ -47,7 +45,6 @@ module.exports = _arrayWithHoles;
   \***************************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 7:0-14 */
 /***/ ((module) => {
 
 function _classCallCheck(instance, Constructor) {
@@ -66,7 +63,6 @@ module.exports = _classCallCheck;
   \************************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 17:0-14 */
 /***/ ((module) => {
 
 function _defineProperties(target, props) {
@@ -95,7 +91,6 @@ module.exports = _createClass;
   \*********************************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 28:0-14 */
 /***/ ((module) => {
 
 function _iterableToArrayLimit(arr, i) {
@@ -135,7 +130,6 @@ module.exports = _iterableToArrayLimit;
   \****************************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 5:0-14 */
 /***/ ((module) => {
 
 function _nonIterableRest() {
@@ -152,7 +146,6 @@ module.exports = _nonIterableRest;
   \**************************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 13:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var arrayWithHoles = __webpack_require__(/*! ./arrayWithHoles */ "./node_modules/@babel/runtime/helpers/arrayWithHoles.js");
@@ -177,7 +170,6 @@ module.exports = _slicedToArray;
   \***************************************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 12:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var arrayLikeToArray = __webpack_require__(/*! ./arrayLikeToArray */ "./node_modules/@babel/runtime/helpers/arrayLikeToArray.js");
@@ -201,8 +193,6 @@ module.exports = _unsupportedIterableToArray;
   \************************************************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: __webpack_exports__, top-level-this-exports, __webpack_require__ */
-/*! CommonJS bailout: this is used directly at 5:2-6 */
-/*! CommonJS bailout: exports is used directly at 2:75-82 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 (function (global, factory) {
@@ -48643,7 +48633,7 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 677:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 660:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -48959,6 +48949,8 @@ Game.prototype.levelStart = function (level) {
             orbPositions = [[400, 280], [400, 100] , [100, 400], [300, 400], [550, 400]];
             this.orbs = this.addOrbs(orbPositions, this.orbColors, orbNotes, 5);
             this.player.setPosition([100,100]);
+            this.grid = new Image();
+            this.grid.src = './images/sprites/level_2.png';
             break;
         case 'level 3':
             this.orbColors = ["red", "blue", "orange", "green", "orange", "green"];
@@ -49040,20 +49032,7 @@ Game.prototype.drawGrid = function (gridCtx, level, headerCtx, audioCtx) {
             break;
         case 'level 2':
             gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
-            gridCtx.beginPath();
-            gridCtx.strokeStyle = "black";
-            gridCtx.fill();
-            gridCtx.rect(10, 10, 680, 480)
-            gridCtx.moveTo(0, 150);
-            gridCtx.lineTo(200, 150);
-            gridCtx.moveTo(500, 20);
-            gridCtx.lineTo(500, 190);
-            gridCtx.moveTo(400, 200);
-            gridCtx.lineTo(580, 200);
-            gridCtx.moveTo(200, 300);
-            gridCtx.lineTo(200, 680);
-            gridCtx.lineWidth = 20;
-            gridCtx.stroke();
+            gridCtx.drawImage(this.grid, 0, 0, 700, 500);
             break;
         case 'level 3':
             gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
@@ -49167,7 +49146,7 @@ Game.prototype.drawSafetyZone = function (safetyZoneCtx, instructionsCtx, level)
     switch (level) {
         case 'level 1':
             instructionsCtx.drawImage(this.background, 0, 0, 700, 500);
-            safetyZoneCtx.drawImage(this.safetyZone, 550, 310, 100, 100);
+            safetyZoneCtx.drawImage(this.safetyZone, 550, 364, 100, 100);
             if (!this.player.isSafe) {
                 instructionsCtx.font = "30px Arial";
                 instructionsCtx.fillText("Move the gray", 170, 350);
@@ -49203,14 +49182,8 @@ Game.prototype.drawSafetyZone = function (safetyZoneCtx, instructionsCtx, level)
             }
             break;
         case 'level 2':
-            safetyZoneCtx.fillStyle = "magenta";
-            safetyZoneCtx.beginPath();
-            safetyZoneCtx.rect(589, 20, 100, 100);
-            safetyZoneCtx.fill();
-            safetyZoneCtx.font = "30px Arial";
-            safetyZoneCtx.fillStyle = "black";
-            safetyZoneCtx.fillText("Safety", 590, 60);
-            safetyZoneCtx.fillText("Zone", 595, 100);
+            instructionsCtx.drawImage(this.background, 0, 0, 700, 500);
+            safetyZoneCtx.drawImage(this.safetyZone, 500, 40, 100, 100);
             break;
         case 'level 3':
             safetyZoneCtx.fillStyle = "magenta";
@@ -49332,7 +49305,6 @@ module.exports = Game;
   \**************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 66:0-14 */
 /***/ ((module) => {
 
 function GameView(game, gameCtx, gridCtx, safetyZoneCtx, instructionsCtx, menuCtx, headerCtx, pauseCtx, audioCtx) {
@@ -49410,7 +49382,6 @@ module.exports = GameView;
   \******************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 55:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Tone = __webpack_require__(/*! tone */ "./node_modules/tone/build/esm/index.js");
@@ -49477,7 +49448,6 @@ module.exports = MovingObject;
   \********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 141:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_object.js");
@@ -49630,7 +49600,6 @@ module.exports = Orb;
   \***********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 178:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const MovingObject = __webpack_require__(/*! ./moving_object */ "./src/moving_object.js");
@@ -49820,7 +49789,6 @@ module.exports = Player;
   \**********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module */
-/*! CommonJS bailout: module.exports is used directly at 17:0-14 */
 /***/ ((module) => {
 
 const Util = {
