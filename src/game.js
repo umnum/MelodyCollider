@@ -317,9 +317,11 @@ Game.prototype.levelStart = function (level) {
         case 'level 3':
             this.orbColors = ["red", "blue", "orange", "green", "orange", "green"];
             orbNotes = ["e4", "a4", "e5", "g4", "e5", "g4"];
-            orbPositions = [[580, 80], [100, 400] , [200, 200], [400, 300], [500, 450], [600, 250]];
+            orbPositions = [[580, 80], [100, 400] , [200, 200], [350, 300], [500, 440], [600, 250]];
             this.orbs = this.addOrbs(orbPositions, this.orbColors, orbNotes, 6);
             this.player.setPosition([100, 100]);
+            this.grid = new Image();
+            this.grid.src = './images/sprites/level_3.png';
             break;
         case 'level 4':
             this.orbColors = ["green", "blue", "yellow", "yellow", "blue", "green", "pink", "green", "blue", "blue"];
@@ -398,26 +400,7 @@ Game.prototype.drawGrid = function (gridCtx, level, headerCtx, audioCtx) {
             break;
         case 'level 3':
             gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
-            gridCtx.beginPath();
-            gridCtx.strokeStyle = "black";
-            gridCtx.fill();
-            gridCtx.rect(10, 10, 680, 480)
-            gridCtx.moveTo(20, 150);
-            gridCtx.lineTo(100, 150);
-            gridCtx.moveTo(300, 20);
-            gridCtx.lineTo(300, 150);
-            gridCtx.moveTo(400, 200);
-            gridCtx.lineTo(580, 200);
-            gridCtx.moveTo(450, 200);
-            gridCtx.lineTo(450, 400);
-            gridCtx.moveTo(200, 390);
-            gridCtx.lineTo(450, 390);
-            gridCtx.moveTo(200, 300);
-            gridCtx.lineTo(200, 400);
-            gridCtx.moveTo(500, 20);
-            gridCtx.lineTo(500, 200);
-            gridCtx.lineWidth = 20;
-            gridCtx.stroke();
+            gridCtx.drawImage(this.grid, 0, 0, 700, 500);
             break;
         case 'level 4':
             let {level4} = this.gridObstacles;
@@ -548,14 +531,8 @@ Game.prototype.drawSafetyZone = function (safetyZoneCtx, instructionsCtx, level)
             safetyZoneCtx.drawImage(this.safetyZone, 500, 40, 100, 100);
             break;
         case 'level 3':
-            safetyZoneCtx.fillStyle = "magenta";
-            safetyZoneCtx.beginPath();
-            safetyZoneCtx.rect(390, 20, 100, 100);
-            safetyZoneCtx.fill();
-            safetyZoneCtx.font = "30px Arial";
-            safetyZoneCtx.fillStyle = "black";
-            safetyZoneCtx.fillText("Safety", 400, 60);
-            safetyZoneCtx.fillText("Zone", 405, 100);
+            instructionsCtx.drawImage(this.background, 0, 0, 700, 500);
+            safetyZoneCtx.drawImage(this.safetyZone, 300, 35, 100, 100);
             break;
         case 'level 4':
             safetyZoneCtx.fillStyle = "magenta";
