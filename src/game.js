@@ -19,6 +19,8 @@ function Game() {
     this.isPaused = true;
     this.isWon = false;
     this.grid = null;
+    this.titleScreen = new Image();
+    this.titleScreen.src = './images/sprites/title_screen.png';
     this.background = new Image();
     this.background.src = './images/sprites/background.gif';
     this.safetyZone = new Image();
@@ -182,22 +184,12 @@ Game.prototype.drawMenu = function (menuCtx) {
                 menuCtx.fillText("Michael Castanieto", 0, 490);
             }
             else {
-                menuCtx.font = "100px Arial";
-                menuCtx.fillText("Melody Collider", 10, 200);
                 if (this.menuSelectState.gameStart) {
-                    menuCtx.font = "bold 50px Arial";
+                    menuCtx.drawImage(this.titleScreen, 0, 0, 700, 500, 0, 0, 700, 500);
                 }
                 else {
-                    menuCtx.font = "50px Arial";
+                    menuCtx.drawImage(this.titleScreen, 700, 0, 700, 500, 0, 0, 700, 500);
                 }
-                menuCtx.fillText("Start Game", 215, 300);
-                if (this.menuSelectState.gameAbout) {
-                    menuCtx.font = "bold 50px Arial";
-                }
-                else {
-                    menuCtx.font = "50px Arial";
-                }
-                menuCtx.fillText("About Game", 200, 400);
             }
 }
 
@@ -207,6 +199,8 @@ Game.prototype.menuAction = function (action, menuCtx) {
     switch (action) {
         case 'up':
         case 'down':
+        case 'left':
+        case 'right':
             if (!this.isAbout) {
                 this.menuSelectState.gameStart = !this.menuSelectState.gameStart;
                 this.menuSelectState.gameAbout = !this.menuSelectState.gameStart;

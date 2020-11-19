@@ -48633,7 +48633,7 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 637:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 631:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -48657,6 +48657,8 @@ function Game() {
     this.isPaused = true;
     this.isWon = false;
     this.grid = null;
+    this.titleScreen = new Image();
+    this.titleScreen.src = './images/sprites/title_screen.png';
     this.background = new Image();
     this.background.src = './images/sprites/background.gif';
     this.safetyZone = new Image();
@@ -48820,22 +48822,12 @@ Game.prototype.drawMenu = function (menuCtx) {
                 menuCtx.fillText("Michael Castanieto", 0, 490);
             }
             else {
-                menuCtx.font = "100px Arial";
-                menuCtx.fillText("Melody Collider", 10, 200);
                 if (this.menuSelectState.gameStart) {
-                    menuCtx.font = "bold 50px Arial";
+                    menuCtx.drawImage(this.titleScreen, 0, 0, 700, 500, 0, 0, 700, 500);
                 }
                 else {
-                    menuCtx.font = "50px Arial";
+                    menuCtx.drawImage(this.titleScreen, 700, 0, 700, 500, 0, 0, 700, 500);
                 }
-                menuCtx.fillText("Start Game", 215, 300);
-                if (this.menuSelectState.gameAbout) {
-                    menuCtx.font = "bold 50px Arial";
-                }
-                else {
-                    menuCtx.font = "50px Arial";
-                }
-                menuCtx.fillText("About Game", 200, 400);
             }
 }
 
@@ -48845,6 +48837,8 @@ Game.prototype.menuAction = function (action, menuCtx) {
     switch (action) {
         case 'up':
         case 'down':
+        case 'left':
+        case 'right':
             if (!this.isAbout) {
                 this.menuSelectState.gameStart = !this.menuSelectState.gameStart;
                 this.menuSelectState.gameAbout = !this.menuSelectState.gameStart;
@@ -49340,6 +49334,8 @@ GameView.prototype.bindKeyHandlers = function (game) {
     key('space', function () {if(game.player.isSafe) {game.isSequence = true}});
     key('up', function () {game.menuAction('up')});
     key('down', function () {game.menuAction('down')});
+    key('left', function () {game.menuAction('left')});
+    key('right', function () {game.menuAction('right')});
     key('enter', function () {game.menuAction('select', that.menuCtx)});
     key('left', function () {game.pauseAction('left')});
     key('right', function () {game.pauseAction('right')});

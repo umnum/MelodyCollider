@@ -54,6 +54,8 @@ GameView.prototype.bindKeyHandlers = function (game) {
     key('space', function () {if(game.player.isSafe) {game.isSequence = true}});
     key('up', function () {game.menuAction('up')});
     key('down', function () {game.menuAction('down')});
+    key('left', function () {game.menuAction('left')});
+    key('right', function () {game.menuAction('right')});
     key('enter', function () {game.menuAction('select', that.menuCtx)});
     key('left', function () {game.pauseAction('left')});
     key('right', function () {game.pauseAction('right')});
