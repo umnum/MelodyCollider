@@ -29,8 +29,7 @@ function Game() {
     this.safetyZone = new Image();
     this.safetyZone.src = './images/sprites/safety_zone.png';
     this.losingSign = new Image();
-    // TODO: Replace safety zone with a losing sign sprite
-    this.losingSign.src = './images/sprites/safety_zone.png';
+    this.losingSign.src = './images/sprites/losing_sign.png';
     this.lostCounter = 0;
     this.menuSelectState = {
         gameStart: true,
@@ -608,7 +607,7 @@ Game.prototype.moveObjects = function (gridCtx, gameCtx, safetyZoneCtx) {
     let that = this;
     if (this.isGameLost) {
         this.lostCounter++;
-        gridCtx.drawImage(this.losingSign, 0, 0, 100, 100, 300, 200, 100, 100);
+        gridCtx.drawImage(this.losingSign, 0, 0, 400, 200, 150, 150, 400, 200);
         if (this.lostCounter > 100) {
             gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
             this.lostCounter = 0;
