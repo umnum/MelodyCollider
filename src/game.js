@@ -20,6 +20,7 @@ function Game() {
     this.isAbout = false;
     this.isPaused = true;
     this.isWon = false;
+    this.isGameLost = false;
     this.grid = null;
     this.titleScreen = new Image();
     this.titleScreen.src = './images/sprites/title_screen.png';
@@ -27,6 +28,10 @@ function Game() {
     this.background.src = './images/sprites/background.gif';
     this.safetyZone = new Image();
     this.safetyZone.src = './images/sprites/safety_zone.png';
+    this.losingSign = new Image();
+    // TODO: Replace safety zone with a losing sign sprite
+    this.losingSign.src = './images/sprites/safety_zone.png';
+    this.lostCounter = 0;
     this.menuSelectState = {
         gameStart: true,
         gameAbout: false
@@ -601,6 +606,19 @@ Game.prototype.stopSequence = function () {
 Game.prototype.moveObjects = function (gridCtx, gameCtx, safetyZoneCtx) {
     let isOrbRemoved = false;
     let that = this;
+    if (this.isGameLost) {
+        this.lostCounter++;
+        gridCtx.drawImage(this.losingSign, 0, 0, 100, 100, 300, 200, 100, 100);
+        if (this.lostCounter > 100) {
+            gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            this.lostCounter = 0;
+            this.isGameLost = false;
+            let repeatLevel = 'level ' + this.currentLevel;
+            this.levelStart(repeatLevel);
+            this.isIntroSequence = true;
+        }
+        return null;
+    }
     this.orbs.forEach(function (orb, idx) {
         isOrbRemoved = orb.move(gridCtx, gameCtx, safetyZoneCtx, that.player.getPosition());
         if (isOrbRemoved) {
@@ -612,9 +630,7 @@ Game.prototype.moveObjects = function (gridCtx, gameCtx, safetyZoneCtx) {
             let targetOrbColor = that.orbColors.shift();
             orb.synth.triggerAttackRelease(orb.note, "16n");
             if (removedOrbColor !== targetOrbColor) {
-                let repeatLevel = 'level ' + that.currentLevel;
-                that.levelStart(repeatLevel)
-                that.isIntroSequence = true;
+                that.isGameLost = true;
             }
         }
     })
