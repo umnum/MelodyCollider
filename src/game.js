@@ -6,6 +6,8 @@ const DIM_X = 700;
 const DIM_Y = 500;
 const HEADER_DIM_X = 700;
 const HEADER_DIM_Y = 100;
+const INSTRUCTIONS_DIM_X = 300;
+const INSTRUCTIONS_DIM_Y = 500;
 
 function Game() {
     this.player = new Player();
@@ -156,9 +158,9 @@ Game.prototype.drawMenu = function (menuCtx) {
                 menuCtx.fillText("Description", 0, 30);
                 menuCtx.font = "20px Arial";
                 menuCtx.fillText("Chaos reigns as colorful orbs randomly collide in a grid. " +
-                                 "However, what unites", 0, 60);
-                menuCtx.fillText("them all is melody. Navigate the grid as a gray orb and bring order to the orbs", 0, 90);
-                menuCtx.fillText("by collecting them according to their melodic sequence.", 0, 120);
+                                 "What unites them all", 0, 60);
+                menuCtx.fillText("is melody. Navigate the grid as a gray orb and bring order to the orbs by", 0, 90);
+                menuCtx.fillText("collecting them according to their melodic sequence.", 0, 120);
                 menuCtx.font = "bold 25px Arial";
                 menuCtx.fillText("Controls", 0, 165);
                 menuCtx.font = "25px Arial";
@@ -236,6 +238,7 @@ Game.prototype.pauseAction = function (action, pauseCtx, gameCtx, headerCtx, gri
             audioCtx.clearRect(0, 0, DIM_X, DIM_Y);
             safetyZoneCtx.clearRect(0, 0, DIM_X, DIM_Y);
             instructionsCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            instructionsCtx.clearRect(700, 0, INSTRUCTIONS_DIM_X, INSTRUCTIONS_DIM_Y);
             this.isPaused = !this.isGamePaused();
             if (!this.pauseSelectState.gameContinue || this.isWon) {
                 this.isPaused = true;
@@ -294,7 +297,7 @@ Game.prototype.levelStart = function (level) {
             orbPositions = [[100, 100], [300, 100] , [600, 200]];
             orbNotes = ["c4", "d4", "e4"];
             this.orbs = this.addOrbs(orbPositions, this.orbColors, orbNotes, 3);
-            this.player.setPosition([100,360]);
+            this.player.setPosition([490,410]);
             this.isIntroSequence = true;
             this.grid = new Image();
             this.grid.src = './images/sprites/level_1.png';
@@ -481,46 +484,46 @@ Game.prototype.drawGrid = function (gridCtx, level, headerCtx, audioCtx) {
 
 Game.prototype.drawSafetyZone = function (safetyZoneCtx, instructionsCtx, level) {
     safetyZoneCtx.clearRect(0, 0, DIM_X, DIM_Y);
-    instructionsCtx.clearRect(0, 0, DIM_X, DIM_Y);
+    instructionsCtx.drawImage(this.background, 0, 0, 700, 500);
     switch (level) {
         case 'level 1':
-            instructionsCtx.drawImage(this.background, 0, 0, 700, 500);
             safetyZoneCtx.drawImage(this.safetyZone, 550, 364, 100, 100);
             if (!this.player.isSafe) {
+                instructionsCtx.clearRect(700, 0, INSTRUCTIONS_DIM_X, INSTRUCTIONS_DIM_Y);
                 instructionsCtx.font = "30px Arial";
-                instructionsCtx.fillText("Move the gray", 170, 350);
-                instructionsCtx.fillText("orb to safety!", 180, 380);
+                instructionsCtx.fillText("Move the gray", 710, 350);
+                instructionsCtx.fillText("orb to safety!", 720, 380);
                 instructionsCtx.lineWidth = 3;
                 instructionsCtx.beginPath();
-                instructionsCtx.moveTo(400, 360);
-                instructionsCtx.lineTo(500, 360);
+                instructionsCtx.moveTo(750, 420);
+                instructionsCtx.lineTo(850, 420);
                 instructionsCtx.stroke();
                 instructionsCtx.beginPath();
-                instructionsCtx.moveTo(480, 340);
-                instructionsCtx.lineTo(500, 360);
+                instructionsCtx.moveTo(750, 420);
+                instructionsCtx.lineTo(770, 440);
                 instructionsCtx.stroke();
                 instructionsCtx.beginPath();
-                instructionsCtx.moveTo(480, 380);
-                instructionsCtx.lineTo(500, 360);
+                instructionsCtx.moveTo(770, 400);
+                instructionsCtx.lineTo(750, 420);
                 instructionsCtx.stroke();
             }
             else if (this.player.isSafe && !this.isPlayingSequence()) {
+                instructionsCtx.clearRect(700, 0, INSTRUCTIONS_DIM_X, INSTRUCTIONS_DIM_Y);
                 instructionsCtx.font = "30px Arial";
-                instructionsCtx.fillText("While in a Safety Zone,", 170, 370);
-                instructionsCtx.fillText("press", 170, 400);
+                instructionsCtx.fillText("While in a", 710, 270);
+                instructionsCtx.fillText("Safety Zone,", 710, 300);
+                instructionsCtx.fillText("press", 710, 330);
                 instructionsCtx.font = "bold 30px Arial";
-                instructionsCtx.fillText("spacebar", 255, 400);
+                instructionsCtx.fillText("spacebar", 790, 330);
                 instructionsCtx.font = "30px Arial";
-                instructionsCtx.fillText("to hear ", 395, 400);
-                instructionsCtx.fillText("the orbs play their melody", 170, 430);
-            }
-            else {
-                instructionsCtx.font = "30px Arial";
-                instructionsCtx.fillText("Collect the orbs in", 170, 370);
-                instructionsCtx.fillText("the sequence played", 170, 400);
+                instructionsCtx.fillText("to hear the orbs", 710, 360);
+                instructionsCtx.fillText("play their melody", 710, 390);
+                instructionsCtx.fillText("Collect the orbs in", 710, 450);
+                instructionsCtx.fillText("the sequence played", 710, 480);
             }
             break;
         case 'level 2':
+            instructionsCtx.clearRect(700, 0, INSTRUCTIONS_DIM_X, INSTRUCTIONS_DIM_Y);
             instructionsCtx.drawImage(this.background, 0, 0, 700, 500);
             safetyZoneCtx.drawImage(this.safetyZone, 500, 40, 100, 100);
             break;
