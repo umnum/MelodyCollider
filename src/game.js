@@ -13,7 +13,7 @@ function Game() {
     this.player = new Player();
     this.playerWasSafe = false;
     this.orbs = [];
-    this.currentLevel = 4;
+    this.currentLevel = 1;
     this.isIntroSequence = false;
     this.isSequence = false;
     this.isMenu = false;
@@ -519,23 +519,13 @@ Game.prototype.drawSafetyZone = function (safetyZoneCtx, instructionsCtx, level)
             break;
         case 'level 2':
             instructionsCtx.clearRect(700, 0, INSTRUCTIONS_DIM_X, INSTRUCTIONS_DIM_Y);
-            instructionsCtx.drawImage(this.background, 0, 0, 700, 500);
             safetyZoneCtx.drawImage(this.safetyZone, 500, 40, 100, 100);
             break;
         case 'level 3':
-            instructionsCtx.drawImage(this.background, 0, 0, 700, 500);
             safetyZoneCtx.drawImage(this.safetyZone, 300, 35, 100, 100);
             break;
         case 'level 4':
-            // TODO: Add safety zone sprite
-            safetyZoneCtx.fillStyle = "magenta";
-            safetyZoneCtx.beginPath();
-            safetyZoneCtx.rect(585, 380, 100, 100);
-            safetyZoneCtx.fill();
-            safetyZoneCtx.font = "30px Arial";
-            safetyZoneCtx.fillStyle = "black";
-            safetyZoneCtx.fillText("Safety", 590, 425);
-            safetyZoneCtx.fillText("Zone", 595, 455);
+            safetyZoneCtx.drawImage(this.safetyZone, 550, 365, 100, 100);
             break;
     }
 }
