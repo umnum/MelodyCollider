@@ -11,12 +11,12 @@ function GameView(game, gameCtx, gridCtx, safetyZoneCtx, instructionsCtx, menuCt
 }
 
 GameView.prototype.start = function () {
-    window.setInterval(this.handleGame.bind(this), 20);
+    window.setInterval(this.renderGame.bind(this), 20);
     this.bindKeyHandlers(this.game);
     this.game.menuStart();
 };
 
-GameView.prototype.handleGame = function (e) {
+GameView.prototype.renderGame = function (e) {
     if (this.game.isPlayingMenuScreen()) {
         this.game.playMenuScreen(this.menuCtx);
     }
@@ -60,9 +60,7 @@ GameView.prototype.bindKeyHandlers = function (game) {
     key('left', function () {game.pauseAction('left')});
     key('right', function () {game.pauseAction('right')});
     key('enter', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.safetyZoneCtx, that.instructionsCtx, that.audioCtx)});
-    //key('space', function () {game.pauseAction('select', that.pauseCtx, that.gameCtx, that.headerCtx, that.gridCtx, that.safetyZoneCtx, that.audioCtx)});
     key('m', function () {game.toggleAudio()});
-    //key('f', function () {game.stopSequence()});
 }
 
 module.exports = GameView;

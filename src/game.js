@@ -71,7 +71,6 @@ function Game() {
 }
 
 Game.prototype.menuStart = function () {
-    //this.levelStart('level ' + this.currentLevel);
     this.isMenu = true;
 }
 
