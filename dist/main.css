@@ -2,15 +2,6 @@ html, body {
     margin: 0px;
 }
 
-#github-link, #github-logo {
-    display: block;
-    position: absolute;
-    top: 600px;
-    left: 550px;
-    width: 100px;
-    height: 100px;
-}
-
 canvas {
     display: block;
     position: absolute;
@@ -29,4 +20,13 @@ canvas {
 
 #audio-canvas:hover {
     cursor: pointer;
+}
+
+footer {
+    height: 50;
+    width: 50;
+    display: block;
+    position: absolute;
+    top: 610px;
+    left: 650px;
 }
