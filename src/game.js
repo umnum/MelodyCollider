@@ -158,36 +158,37 @@ Game.prototype.drawMenu = function (menuCtx) {
     // draw menu screen
             menuCtx.clearRect(0, 0, DIM_X, DIM_Y);
             if (this.isAbout) {
+                menuCtx.drawImage(this.background, 0, 0, 700, 500, 0, 0, 700, 500);
                 menuCtx.font = "bold 25px Arial";
-                menuCtx.fillText("Description", 0, 30);
+                menuCtx.fillText("Description", 10, 30);
                 menuCtx.font = "20px Arial";
                 menuCtx.fillText("Chaos reigns as colorful orbs randomly collide in a grid. " +
-                                 "What unites them all", 0, 60);
-                menuCtx.fillText("is melody. Navigate the grid as a gray orb and bring order to the orbs by", 0, 90);
-                menuCtx.fillText("collecting them according to their melodic sequence.", 0, 120);
+                                 "What unites them all", 10, 60);
+                menuCtx.fillText("is melody. Navigate the grid as a gray orb and bring order to the orbs by", 10, 90);
+                menuCtx.fillText("collecting them according to their melodic sequence.", 10, 120);
                 menuCtx.font = "bold 25px Arial";
-                menuCtx.fillText("Controls", 0, 165);
+                menuCtx.fillText("Controls", 10, 165);
                 menuCtx.font = "25px Arial";
-                menuCtx.fillText("Up", 0, 200);
+                menuCtx.fillText("Up", 10, 200);
                 menuCtx.fillText("Arrow Up", 250, 200);
-                menuCtx.fillText("Down:", 0, 230);
+                menuCtx.fillText("Down:", 10, 230);
                 menuCtx.fillText("Arrow Down", 250, 230);
-                menuCtx.fillText("Left:", 0, 260);
+                menuCtx.fillText("Left:", 10, 260);
                 menuCtx.fillText("Arrow Left", 250, 260);
-                menuCtx.fillText("Right:", 0, 290);
+                menuCtx.fillText("Right:", 10, 290);
                 menuCtx.fillText("Arrow Right", 250, 290);
-                menuCtx.fillText("Select:", 0, 320);
+                menuCtx.fillText("Select:", 10, 320);
                 menuCtx.fillText("Return/Enter", 250, 320);
-                menuCtx.fillText("Pause/Unpause:", 0, 350);
+                menuCtx.fillText("Pause/Unpause:", 10, 350);
                 menuCtx.fillText("Return/Enter", 250, 350);
-                menuCtx.fillText("Play Melody", 0, 380);
+                menuCtx.fillText("Play Melody", 10, 380);
                 menuCtx.fillText("Spacebar", 250, 380);
-                menuCtx.fillText("Audio On/Off:", 0, 410);
+                menuCtx.fillText("Audio On/Off:", 10, 410);
                 menuCtx.fillText("Press m or Click on Audio Icon", 250, 410);
                 menuCtx.font = "bold 25px Arial";
-                menuCtx.fillText("Developed By", 0, 455);
+                menuCtx.fillText("Developed By", 10, 455);
                 menuCtx.font = "25px Arial";
-                menuCtx.fillText("Michael Castanieto", 0, 490);
+                menuCtx.fillText("Michael Castanieto", 10, 490);
             }
             else {
                 if (this.menuSelectState.gameStart) {
