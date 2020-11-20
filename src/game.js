@@ -13,7 +13,7 @@ function Game() {
     this.player = new Player();
     this.playerWasSafe = false;
     this.orbs = [];
-    this.currentLevel = 1;
+    this.currentLevel = 4;
     this.isIntroSequence = false;
     this.isSequence = false;
     this.isMenu = false;
@@ -30,6 +30,8 @@ function Game() {
     this.safetyZone.src = './images/sprites/safety_zone.png';
     this.losingSign = new Image();
     this.losingSign.src = './images/sprites/losing_sign.png';
+    this.obstacles = new Image();
+    this.obstacles.src = './images/sprites/level_4_obstacles.png';
     this.lostCounter = 0;
     this.menuSelectState = {
         gameStart: true,
@@ -46,23 +48,23 @@ function Game() {
         level4: {
             obs1: {
                 moveRight: true,
-                posFrom: [225, 166],
+                posFrom: [265, 170],
                 posTo: [225, 333],
-                xMin: 225,
-                xMax: 475
+                xMin: 250,
+                xMax: 400
             },
             obs2: {
                 moveUp: false,
-                posFrom: [0, 116],
+                posFrom: [50, 175],
                 posTo: [235, 116],
-                yMin: 166,
-                yMax: 333
+                yMin: 175,
+                yMax: 270
             },
             obs3: {moveUp: true,
-                posFrom: [465, 333],
+                posFrom: [450, 333],
                 posTo: [680, 333],
-                yMin: 166,
-                yMax: 333
+                yMin: 175,
+                yMax: 270
             }
         }
     }
@@ -332,6 +334,8 @@ Game.prototype.levelStart = function (level) {
                             [600, 250], [525, 450], [400, 350], [300, 350], [300, 100]];
             this.orbs = this.addOrbs(orbPositions, this.orbColors, orbNotes, 10);
             this.player.setPosition([100, 100]);
+            this.grid = new Image();
+            this.grid.src = './images/sprites/level_4.png';
             break;
         case 'level 5':
             this.orbColors = [];
@@ -407,18 +411,9 @@ Game.prototype.drawGrid = function (gridCtx, level, headerCtx, audioCtx) {
         case 'level 4':
             let {level4} = this.gridObstacles;
             gridCtx.clearRect(0, 0, DIM_X, DIM_Y);
+            gridCtx.drawImage(this.grid, 0, 0, 700, 500);
             gridCtx.beginPath();
             gridCtx.strokeStyle = "black";
-            gridCtx.fill();
-            gridCtx.rect(10, 10, 680, 480)
-            gridCtx.moveTo(225, 0);
-            gridCtx.lineTo(225, 166);
-            gridCtx.moveTo(225, 333);
-            gridCtx.lineTo(225, 500);
-            gridCtx.moveTo(475, 0);
-            gridCtx.lineTo(475, 166);
-            gridCtx.moveTo(475, 333);
-            gridCtx.lineTo(475, 500);
             if (level4.obs1.posFrom[0] > level4.obs1.xMax) {
                 level4.obs1.moveRight = false;
             }
@@ -461,14 +456,9 @@ Game.prototype.drawGrid = function (gridCtx, level, headerCtx, audioCtx) {
                 level4.obs3.posFrom[1] += 2;
                 level4.obs3.posTo[1] += 2;
             }
-            gridCtx.moveTo(level4.obs1.posFrom[0], level4.obs1.posFrom[1]);
-            gridCtx.lineTo(level4.obs1.posTo[0], level4.obs1.posTo[1]);
-            gridCtx.moveTo(level4.obs2.posFrom[0], level4.obs2.posFrom[1]);
-            gridCtx.lineTo(level4.obs2.posTo[0], level4.obs2.posTo[1]);
-            gridCtx.moveTo(level4.obs3.posFrom[0], level4.obs3.posFrom[1]);
-            gridCtx.lineTo(level4.obs3.posTo[0], level4.obs3.posTo[1]);
-            gridCtx.lineWidth = 20;
-            gridCtx.stroke();
+            gridCtx.drawImage(this.obstacles, 0, 0, 50, 150, level4.obs1.posFrom[0], level4.obs1.posFrom[1], 50, 150);
+            gridCtx.drawImage(this.obstacles, 0, 0, 200, 50, level4.obs2.posFrom[0], level4.obs2.posFrom[1], 200, 50);
+            gridCtx.drawImage(this.obstacles, 0, 0, 200, 50, level4.obs3.posFrom[0], level4.obs3.posFrom[1], 200, 50);
             break;
         case 'level 5':
             headerCtx.clearRect(0, 0, DIM_X, DIM_Y);
@@ -537,6 +527,7 @@ Game.prototype.drawSafetyZone = function (safetyZoneCtx, instructionsCtx, level)
             safetyZoneCtx.drawImage(this.safetyZone, 300, 35, 100, 100);
             break;
         case 'level 4':
+            // TODO: Add safety zone sprite
             safetyZoneCtx.fillStyle = "magenta";
             safetyZoneCtx.beginPath();
             safetyZoneCtx.rect(585, 380, 100, 100);
