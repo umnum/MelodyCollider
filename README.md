@@ -1,5 +1,10 @@
 # Melody Collider
-An online game based on collecting melodies. Implemented almost entirely in Vanilla Javascript, with visual rendering done in Canvas API, audio processing done in Tone.js, and key event handling done in keymaster.js.
+<p align="center">
+    <a href="https://umnum.github.io/MelodyCollider" target="_blank">
+        <img width="50%" src="./images/Melody_Collider_Example.gif" alt="Melody Colider Example">
+    </a>
+</p>
+An online game based on collecting melodies. Implemented almost entirely in Vanilla Javascript, with visual rendering done in Canvas API, audio processing done in Tone.js, and keyboard event handling done in keymaster.js.
 
 [play Melody Collider](https://umnum.github.io/MelodyCollider)
 
