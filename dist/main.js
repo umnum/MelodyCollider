@@ -48633,7 +48633,7 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
   \*********************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements: module, __webpack_require__ */
-/*! CommonJS bailout: module.exports is used directly at 630:0-14 */
+/*! CommonJS bailout: module.exports is used directly at 632:0-14 */
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const Orb = __webpack_require__(/*! ./orb */ "./src/orb.js");
@@ -48938,10 +48938,10 @@ Game.prototype.levelStart = function (level) {
     switch (level) {
         case 'level 1':
             this.orbColors = ["red", "green", "blue"];
-            orbPositions = [[100, 100], [300, 100] , [600, 200]];
+            orbPositions = [[490, 410], [300, 100] , [600, 200]];
             orbNotes = ["c4", "d4", "e4"];
             this.orbs = this.addOrbs(orbPositions, this.orbColors, orbNotes, 3);
-            this.player.setPosition([490,410]);
+            this.player.setPosition([130, 80]);
             this.isIntroSequence = true;
             this.grid = new Image();
             this.grid.src = './images/sprites/level_1.png';
@@ -49120,6 +49120,8 @@ Game.prototype.drawSafetyZone = function (safetyZoneCtx, instructionsCtx, level)
     switch (level) {
         case 'level 1':
             safetyZoneCtx.drawImage(this.safetyZone, 550, 364, 100, 100);
+            instructionsCtx.font = "30px Arial";
+            instructionsCtx.fillText("Start Here", 58, 150);
             if (!this.player.isSafe) {
                 instructionsCtx.clearRect(700, 0, INSTRUCTIONS_DIM_X, INSTRUCTIONS_DIM_Y);
                 instructionsCtx.font = "30px Arial";
